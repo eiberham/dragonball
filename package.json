@@ -1,0 +1,26 @@
+{
+  "name": "dragonball",
+  "version": "1.0.0",
+  "description": "Dragon Ball API",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dragonball",
+    "dragon",
+    "ball",
+    "api",
+    "rest"
+  ],
+  "author": "Abraham Cedeno",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-prettify": "^0.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  }
+}
