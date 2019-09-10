@@ -17,6 +17,7 @@
   "author": "Abraham Cedeno",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "express-prettify": "^0.1.1",
     "helmet": "^3.21.0",

@@ -1,9 +1,12 @@
 const express = require('express');
 const helmet = require('helmet');
-const port = 3000;
+const port = process.env.PORT || 3000;
 const pretty = require('express-prettify');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/dragonball', {useNewUrlParser: true, useUnifiedTopology: true});
+
+require('dotenv').config()
+
+mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true});
 
 require('./models/characters');
 
