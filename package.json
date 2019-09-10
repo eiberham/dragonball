@@ -18,7 +18,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "express-prettify": "^0.1.1"
+    "express-prettify": "^0.1.1",
+    "helmet": "^3.21.0",
+    "mongodb": "^3.3.2",
+    "mongoose": "^5.7.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.2"

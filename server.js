@@ -1,8 +1,15 @@
 const express = require('express');
-const app = express();
+const helmet = require('helmet');
 const port = 3000;
-
 const pretty = require('express-prettify');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/dragonball', {useNewUrlParser: true, useUnifiedTopology: true});
+
+require('./models/characters');
+
+const characters = require('./routes/characters');
+
+const app = express();
 
 app.use(function(req, res, next){
     res.append('Access-Control-Allow-Origin', req.headers.origin || '*');
@@ -16,6 +23,8 @@ app.use(function(req, res, next){
     }
 });
 
+app.use(helmet());
+
 app.use(pretty({ query: 'pretty' }));
 
 app.set('json spaces', 4);
@@ -23,5 +32,7 @@ app.set('json spaces', 4);
 app.get('/', (req, res, next) => {
     res.send(`Welcome to the dragon ball api, enjoy!`);
 });
+
+app.use('/api/characters', characters);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
