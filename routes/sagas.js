@@ -1,20 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Characters = mongoose.model('characters');
+const Sagas = mongoose.model('sagas');
 
 router.get('/', (req, res, next) => {
-    Characters.find({}, (err, characters) => {
+    Sagas.find({}, (err, sagas) => {
         if(err) throw err;
-        res.json(characters);
-    })
+        res.json(sagas);
+    });
 });
 
 router.get('/:name', (req, res, next) => {
     const name = req.params.name;
-    Characters.find({name}, (err, character) => {
+    Sagas.find({name}, (err, saga) => {
         if(err) throw err;
-        res.json(character);
+        res.json(saga);
     });
 });
 

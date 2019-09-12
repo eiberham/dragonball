@@ -9,8 +9,10 @@ require('dotenv').config()
 mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true});
 
 require('./models/characters');
+require('./models/sagas');
 
 const characters = require('./routes/characters');
+const sagas = require('./routes/sagas');
 
 const app = express();
 
@@ -37,5 +39,6 @@ app.get('/', (req, res, next) => {
 });
 
 app.use('/api/characters', characters);
+app.use('/api/sagas', sagas);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
