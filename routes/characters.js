@@ -1,4 +1,6 @@
 const express = require('express');
+const redis = require('redis');
+const client = redis.createClient();
 const router = express.Router();
 const mongoose = require('mongoose');
 const Characters = mongoose.model('characters');
@@ -12,9 +14,17 @@ router.get('/', (req, res, next) => {
 
 router.get('/:name', (req, res, next) => {
     const name = req.params.name;
-    Characters.find({name}, (err, character) => {
+    client.get(name, (err, result) => {
         if(err) throw err;
-        res.json(character);
+        if (result) {
+            res.send(result);
+        } else {
+            Characters.find({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, character) => {
+                if(err) throw err;
+                client.setex(name, process.env.REDIS_EXP_TIME, JSON.stringify(character));
+                res.json(character);
+            });
+        }
     });
 });
 

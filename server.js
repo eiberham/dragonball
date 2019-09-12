@@ -1,5 +1,8 @@
 const express = require('express');
+const chalk = require('chalk');
+const fs = require('fs');
 const helmet = require('helmet');
+const protocol = process.env.PROTOCOL || 'https';
 const port = process.env.PORT || 3000;
 const pretty = require('express-prettify');
 const mongoose = require('mongoose');
@@ -41,4 +44,4 @@ app.get('/', (req, res, next) => {
 app.use('/api/characters', characters);
 app.use('/api/sagas', sagas);
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port, () => console.log(chalk.blue(`Listening on port ${port}`)));
