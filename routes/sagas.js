@@ -1,5 +1,4 @@
 const express = require('express');
-const chalk = require('chalk');
 const redis = require('redis');
 const client = redis.createClient();
 const router = express.Router();

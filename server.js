@@ -1,8 +1,8 @@
 const express = require('express');
+const https = require('https');
 const chalk = require('chalk');
 const fs = require('fs');
 const helmet = require('helmet');
-const protocol = process.env.PROTOCOL || 'https';
 const port = process.env.PORT || 3000;
 const pretty = require('express-prettify');
 const mongoose = require('mongoose');
@@ -44,4 +44,8 @@ app.get('/', (req, res, next) => {
 app.use('/api/characters', characters);
 app.use('/api/sagas', sagas);
 
-app.listen(port, () => console.log(chalk.blue(`Listening on port ${port}`)));
+https.createServer({
+    key: fs.readFileSync('./certs/key.pem'),
+    cert: fs.readFileSync('./certs/cert.pem'),
+    passphrase: process.env.TSL_PASSPHRASE
+}, app).listen(port, () => console.log(chalk.blue(`Listening on port ${port}`)));
