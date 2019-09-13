@@ -6,10 +6,19 @@ const mongoose = require('mongoose');
 const Characters = mongoose.model('characters');
 
 router.get('/', (req, res, next) => {
-    Characters.find({}, (err, characters) => {
+    client.get('characters', (err, result) => {
         if(err) throw err;
-        res.json(characters);
+        if( result ){
+            res.send(result);
+        }else{
+            Characters.find({}, (err, characters) => {
+                if(err) throw err;
+                client.setex('characters', process.env.REDIS_EXP_TIME, JSON.stringify(characters));
+                res.json(characters);
+            })
+        }
     })
+
 });
 
 router.get('/:name', (req, res, next) => {

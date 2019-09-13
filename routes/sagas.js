@@ -6,10 +6,18 @@ const mongoose = require('mongoose');
 const Sagas = mongoose.model('sagas');
 
 router.get('/', (req, res, next) => {
-    Sagas.find({}, (err, sagas) => {
+    client.get('sagas', (err, result) => {
         if(err) throw err;
-        res.json(sagas);
-    });
+        if( result ){
+            res.send(result);
+        }else{
+            Sagas.find({}, (err, sagas) => {
+                if(err) throw err;
+                client.setex('sagas', process.env.REDIS_EXP_TIME, JSON.stringify(sagas));
+                res.json(sagas);
+            });
+        }
+    })
 });
 
 router.get('/:name', (req, res, next) => {
