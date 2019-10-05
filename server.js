@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const port = process.env.PORT || 3000;
 const pretty = require('express-prettify');
 const mongoose = require('mongoose');
+const jwt = require('express-jwt');
+const jwksrsa = require('jwks-rsa');
 const ui = require('swagger-ui-express');
 const docs = require('./swagger.json');
 
@@ -33,6 +35,9 @@ app.use(function(req, res, next){
     }
 });
 
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
 app.use(helmet());
 
 app.use(pretty({ query: 'pretty' }));
@@ -44,6 +49,20 @@ app.use('/swagger', ui.serve, ui.setup(docs));
 app.get('/', (req, res, next) => {
     res.send(`Welcome to the dragon ball api, enjoy!`);
 });
+
+const jwtcheck = jwt({
+    secret: jwksrsa.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: `https://dev-jsxonkyx.auth0.com/.well-known/jwks.json`
+    }),
+    audience: 'https://api.dragonball.com',
+    issuer: `https://dev-jsxonkyx.auth0.com/`,
+    algorithms: ['RS256']
+});
+
+app.use(jwtcheck);
 
 app.use('/api/characters', characters);
 app.use('/api/sagas', sagas);

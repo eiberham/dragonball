@@ -29,7 +29,7 @@ router.get('/:name', (req, res, next) => {
         }else{
             Sagas.find({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, saga) => {
                 if(err) throw err;
-                client.setex(saga, process.env.REDIS_EXP_TIME, JSON.stringify(character));
+                client.setex(name, process.env.REDIS_EXP_TIME, JSON.stringify(saga));
                 res.json(saga);
             });
         }
