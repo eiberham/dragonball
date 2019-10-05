@@ -1,0 +1,40 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Dragon Ball Rest Api",
+        "description": "Restful api to provide information about the japanese anime",
+        "termsOfService": "http://example.com/terms/",
+        "contact": {
+            "name": "Kaiosama",
+            "url": "http://www.noonecares.com/support",
+            "email": "support@noonecares.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.1"
+    },
+    "paths": {
+        "/characters": {
+          "get": {
+            "tags": ["Operations"],
+            "description": "Get characters info",
+            "operationId": "getcharacters",
+            "parameters": [],
+            "responses": {
+              "200": {
+                "description": "Characters were obtained",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Users"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+  }

@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const port = process.env.PORT || 3000;
 const pretty = require('express-prettify');
 const mongoose = require('mongoose');
+const ui = require('swagger-ui-express');
+const docs = require('./swagger.json');
 
 require('dotenv').config()
 
@@ -36,6 +38,8 @@ app.use(helmet());
 app.use(pretty({ query: 'pretty' }));
 
 app.set('json spaces', 4);
+
+app.use('/swagger', ui.serve, ui.setup(docs));
 
 app.get('/', (req, res, next) => {
     res.send(`Welcome to the dragon ball api, enjoy!`);
