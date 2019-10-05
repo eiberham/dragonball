@@ -11,6 +11,7 @@ The application is compound of the following features:
   <li>SSL support</li>
   <li>Data caching with Redis</li>
   <li>Clustering via pm2 package</li>
+  <li>Auth0 authentication</>
 </ol>
 
 This is the list of endpoints currently available:
@@ -23,6 +24,9 @@ This is the list of endpoints currently available:
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td>POST</td><td>/auth</td><td>Authentication resource</td>
+    </tr>
     <tr>
       <td>GET</td><td>/characters</td><td>Get the list of characters</td>
     </tr>
