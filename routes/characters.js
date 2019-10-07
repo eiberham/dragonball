@@ -28,7 +28,7 @@ router.get('/:name', (req, res, next) => {
         if (result) {
             res.send(result);
         } else {
-            Characters.find({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, character) => {
+            Characters.findOne({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, character) => {
                 if(err) throw err;
                 client.setex(name, process.env.REDIS_EXP_TIME, JSON.stringify(character));
                 res.json(character);

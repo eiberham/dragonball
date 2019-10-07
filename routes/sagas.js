@@ -27,7 +27,7 @@ router.get('/:name', (req, res, next) => {
         if(result){
             res.send(result);
         }else{
-            Sagas.find({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, saga) => {
+            Sagas.findOne({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, saga) => {
                 if(err) throw err;
                 client.setex(name, process.env.REDIS_EXP_TIME, JSON.stringify(saga));
                 res.json(saga);
