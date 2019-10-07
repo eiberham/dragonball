@@ -41,6 +41,9 @@
                 "username": {
                   "type": "string"
                 },
+                "password": {
+                  "type": "string"
+                },
                 "profile": {
                   "type": "integer"
                 }
@@ -49,9 +52,6 @@
             "Authenticated": {
               "type": "object",
               "properties": {
-                "code": {
-                  "type": "integer"
-                },
                 "token": {
                   "type": "string"
                 },
@@ -108,6 +108,31 @@
               "tags": ["Endpoints"],
               "description": "Authenticate",
               "operationId": "authenticate",
+              "consumes": [
+                "application/x-www-form-urlencoded"
+              ],
+              "produces": [
+                "application/xml",
+                "application/json"
+              ],
+              "requestBody": [
+                {
+                  "description": "Username and password to get authenticated",
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/definitions/User"
+                      }
+                    },
+                    "application/x-www-form-urlencoded": {
+                      "schema": {
+                        "$ref": "#/definitions/User"
+                      }
+                    }
+                  }
+                }
+              ],
               "responses": {
                 "200": {
                   "description": "Ok",
@@ -231,6 +256,19 @@
                   }
                 ]
             }
+        }
+      },
+      "definitions": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "user": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
         }
       }
   }

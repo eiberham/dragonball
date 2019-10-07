@@ -5,7 +5,7 @@ const User = mongoose.model('users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-router.post('/', ( req, res ) => {
+router.get('/', ( req, res ) => {
     
     const username = req.body.user;
     const password = req.body.password;
@@ -25,12 +25,9 @@ router.post('/', ( req, res ) => {
                     exp: Math.floor(Date.now() / 1000) + (60 * 60) 
                 };
             
-                jwt.sign(payload, 'secret', { algorithm: 'RS256' }, (err, token) => {
-                    console.log("el token: ", token);
-                    //res.send('cool');
+                jwt.sign(payload, process.env.JWT_SECRET, (err, token) => {
                     if(err) throw err;
                     res.status(200).json({
-                        code: 200,
                         message: 'Authenticated',
                         token
                     })
