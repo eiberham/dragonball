@@ -21,30 +21,33 @@ This is the list of endpoints currently available:
 <table>
   <thead>
     <tr>
-    <th>Verb</th><th>Resource</th><th>Description</th>
+      <th>Verb</th><th>Resource</th><th>Description</th><th>Scope</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>POST</td><td>/auth</td><td>Authentication resource</td>
+      <td>POST</td><td>/auth</td><td>Authentication resource</td><td>Public</td>
     </tr>
     <tr>
-      <td>GET</td><td>/characters</td><td>Get the list of characters</td>
+      <td>GET</td><td>/characters</td><td>Get the list of characters</td><td>Public</td>
     </tr>
     <tr>
-      <td>GET</td><td>/characters/:name</td><td>Get a single character</td>
+      <td>GET</td><td>/characters/:name</td><td>Get a single character</td><td>Public</td>
     </tr>
     <tr>
-      <td>GET</td><td>/sagas</td><td>Get the list of sagas</td>
+      <td>POST</td><td>/characters</td><td>Create a character</td><td>Protected</td>
     </tr>
     <tr>
-      <td>GET</td><td>/sagas/:name</td><td>Get a single saga</td>
+      <td>GET</td><td>/sagas</td><td>Get the list of sagas</td><td>Public</td>
     </tr>
     <tr>
-      <td>GET</td><td>/films</td><td>Get a list of related films</td>
+      <td>GET</td><td>/sagas/:name</td><td>Get a single saga</td><td>Public</td>
     </tr>
     <tr>
-      <td>GET</td><td>/films/:name</td><td>Get info about a single film</td>
+      <td>GET</td><td>/films</td><td>Get a list of related films</td><td>Public</td>
+    </tr>
+    <tr>
+      <td>GET</td><td>/films/:name</td><td>Get info about a single film</td><td>Public</td>
     </tr>
   </tbody>
 </table>
