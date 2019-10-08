@@ -9,10 +9,10 @@ const {
     sanitizeBody 
 } = require('express-validator');
 
-router.get('/', [ 
-    body('user').not().isEmpty().trim().escape().exists(),
+router.post('/', [ 
+    /* body('user').not().isEmpty().trim().escape().exists(),
     body('password').not().isEmpty().trim().escape().exists(),
-    sanitizeBody('notifyOnReply').toBoolean() 
+    sanitizeBody('notifyOnReply').toBoolean()  */
 ], ( req, res ) => {
     
     const username = req.body.user;

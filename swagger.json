@@ -106,7 +106,7 @@
         "/auth": {
             "post": {
               "tags": ["Endpoints"],
-              "description": "Authenticate",
+              "description": "This endpoint allows the user to authenticate and obtain interaction token",
               "operationId": "authenticate",
               "consumes": [
                 "application/x-www-form-urlencoded"
@@ -115,24 +115,17 @@
                 "application/xml",
                 "application/json"
               ],
-              "requestBody": [
-                {
+              "requestBody": {
                   "description": "Username and password to get authenticated",
                   "required": true,
                   "content": {
-                    "application/json": {
-                      "schema": {
-                        "$ref": "#/definitions/User"
-                      }
-                    },
                     "application/x-www-form-urlencoded": {
                       "schema": {
                         "$ref": "#/definitions/User"
                       }
                     }
                   }
-                }
-              ],
+              },
               "responses": {
                 "200": {
                   "description": "Ok",
