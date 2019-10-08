@@ -4,8 +4,16 @@ const mongoose = require('mongoose');
 const User = mongoose.model('users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { 
+    body, 
+    sanitizeBody 
+} = require('express-validator');
 
-router.get('/', ( req, res ) => {
+router.get('/', [ 
+    body('user').not().isEmpty().trim().escape().exists(),
+    body('password').not().isEmpty().trim().escape().exists(),
+    sanitizeBody('notifyOnReply').toBoolean() 
+], ( req, res ) => {
     
     const username = req.body.user;
     const password = req.body.password;
@@ -17,7 +25,7 @@ router.get('/', ( req, res ) => {
 
         const hash = user.password;
 
-        bcrypt.compare(password, hash, function(err, exists) {
+        bcrypt.compare(password, hash, (err, exists) => {
             if(err) throw err;
             if( exists ){
                 const payload = { 
