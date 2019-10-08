@@ -178,6 +178,29 @@
                 }
               }
             }
+          },
+          "post": {
+            "tags": ["Endpoints"],
+            "description": "Create a character record",
+            "operationId": "create_character",
+            "consumes": [
+              "application/x-www-form-urlencoded"
+            ],
+            "produces": [
+              "application/xml",
+              "application/json"
+            ],
+            "requestBody": {
+                "description": "Character info",
+                "required": true,
+                "content": {
+                  "application/x-www-form-urlencoded": {
+                    "schema": {
+                      "$ref": "#/schemas/Character"
+                    }
+                  }
+                }
+            }
           }
         },
         "/characters/{name}": {

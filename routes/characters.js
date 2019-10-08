@@ -4,6 +4,7 @@ const client = redis.createClient();
 const router = express.Router();
 const mongoose = require('mongoose');
 const Characters = mongoose.model('characters');
+const auth = require('../middleware/auth');
 
 router.get('/', (req, res, next) => {
     client.get('characters', (err, result) => {
@@ -35,6 +36,22 @@ router.get('/:name', (req, res, next) => {
             });
         }
     });
+});
+
+router.post('/', [auth], (req, res) => {
+    const { 
+        name, 
+        description, 
+        avatar 
+    } = req.body;
+    Characters.create({
+        name,
+        description,
+        avatar
+    }, function (err, character) {
+        if (err) throw err;
+        res.status(201);
+      });
 });
 
 module.exports = router;
