@@ -11,7 +11,8 @@ The application is compound of the following features:
   <li>SSL support</li>
   <li>Data caching with Redis</li>
   <li>Clustering via pm2 package</li>
-  <li>Auth0 authentication</>
+  <li>JWT authentication and routes protection</li>
+  <li>Fancy OAPI Front-end</li>
 </ol>
 
 This is the list of endpoints currently available:
