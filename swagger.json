@@ -31,6 +31,13 @@
         }
     ],
     "components": {
+        "securitySchemes": {
+          "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+          }
+        },
         "schemas": {
             "User": {
               "type": "object",
@@ -196,10 +203,13 @@
                 "content": {
                   "application/x-www-form-urlencoded": {
                     "schema": {
-                      "$ref": "#/schemas/Character"
+                      "$ref": "#components/schemas/Character"
                     }
                   }
                 }
+            },
+            "security": {
+              "api_key": []
             }
           }
         },
@@ -272,6 +282,13 @@
                   }
                 ]
             }
+        }
+      },
+      "securityDefinitions": {
+        "api_key": {
+          "type": "apiKey",
+          "name": "api_key",
+          "in": "header"
         }
       },
       "definitions": {

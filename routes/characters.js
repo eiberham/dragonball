@@ -50,7 +50,10 @@ router.post('/', [auth], (req, res) => {
         avatar
     }, function (err, character) {
         if (err) throw err;
-        res.status(201);
+        res.status(201)
+        .json({
+            message: 'Resource created'
+        });
       });
 });
 

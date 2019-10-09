@@ -29,11 +29,10 @@ router.post('/', [
             if(err) throw err;
             if( exists ){
                 const payload = { 
-                    user: username, 
-                    exp: Math.floor(Date.now() / 1000) + (60 * 60) 
+                    user: username
                 };
             
-                jwt.sign(payload, process.env.JWT_SECRET, (err, token) => {
+                jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
                     if(err) throw err;
                     res.status(200).json({
                         message: 'Authenticated',

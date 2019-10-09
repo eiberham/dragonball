@@ -4,24 +4,29 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
     const token = req.headers['x-access-token'];
-    const { username } = decoded;
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if( err ) throw err;
-
+        if( err ){
+            if(err.name === 'TokenExpiredError'){
+                res.status(400).json({
+                    "status": 400,
+                    "message": "Token expired"
+                });
+            } else {
+                res.status(401).json({
+                    "status": 401,
+                    "message": "Unauthorized"
+                });
+            }
+            return;
+        }
+        
+        const { username } = decoded;
+        
         User.findOne({
             'username': { $regex: new RegExp(`^${username}`, "i")}
         }, (err, user) => {
             if( err ) throw err;
-
-            if (decoded.exp <= Date.now()) {
-                res.status(400).json({
-                    "status": 400,
-                    "message": "token expired"
-                });
-                return;
-            }
-
             next();
         });
     });
