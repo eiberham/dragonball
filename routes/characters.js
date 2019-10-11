@@ -44,6 +44,7 @@ router.post('/', [auth], (req, res) => {
         description, 
         avatar 
     } = req.body;
+    
     Characters.create({
         name,
         description,
