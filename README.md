@@ -26,6 +26,9 @@ This is the list of endpoints currently available:
   </thead>
   <tbody>
     <tr>
+      <td>GET</td><td>/swagger</td><td>Swagger UI</td><td>Public</td>
+    </tr>
+    <tr>
       <td>POST</td><td>/auth</td><td>Authentication resource</td><td>Public</td>
     </tr>
     <tr>
