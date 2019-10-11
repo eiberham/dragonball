@@ -235,6 +235,66 @@
             ]
           }
         },
+        "/characters/{id}": {
+          "delete": {
+            "tags": ["Endpoints"],
+            "description": "Deleting a character",
+            "operationId": "delete_character",
+            "parameters": [
+              {
+                  "name": "id",
+                  "in": "path",
+                  "description": "ID of the character",
+                  "required": true,
+                  "schema": {
+                      "type": "string"
+                  },
+                  "style": "simple"
+              }
+            ],
+            "consumes": [
+              "application/x-www-form-urlencoded"
+            ],
+            "produces": [
+              "application/xml",
+              "application/json"
+            ],
+            "security": [
+              {
+                "ApiKeyAuth": []
+              }
+            ]
+          },
+          "patch": {
+            "tags": ["Endpoints"],
+            "description": "Updating a character",
+            "operationId": "update_character",
+            "parameters": [
+              {
+                  "name": "id",
+                  "in": "path",
+                  "description": "ID of the character",
+                  "required": true,
+                  "schema": {
+                      "type": "string"
+                  },
+                  "style": "simple"
+              }
+            ],
+            "consumes": [
+              "application/x-www-form-urlencoded"
+            ],
+            "produces": [
+              "application/xml",
+              "application/json"
+            ],
+            "security": [
+              {
+                "ApiKeyAuth": []
+              }
+            ]
+          }
+        },
         "/characters/{name}": {
             "get": {
                 "tags": ["Endpoints"],
