@@ -44,6 +44,9 @@ This is the list of endpoints currently available:
       <td>DELETE</td><td>/characters/:id</td><td>Delete a character</td><td>Protected</td>
     </tr>
     <tr>
+      <td>PATCH</td><td>/characters/:id</td><td>Update a character</td><td>Protected</td>
+    </tr>
+    <tr>
       <td>GET</td><td>/sagas</td><td>Get the list of sagas</td><td>Public</td>
     </tr>
     <tr>
