@@ -58,4 +58,14 @@ router.post('/', [auth], (req, res) => {
       });
 });
 
+router.delete("/:id", [auth], (req, res) => {
+    const id = req.params.id;
+    Characters.deleteOne({_id: id}, (err, character) => {
+        if (err) throw err;
+        res.status(200).json({
+            message: "Resource deleted"
+        });
+    });
+});
+
 module.exports = router;

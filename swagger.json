@@ -95,6 +95,14 @@
                     }
                 }
             },
+            "Created": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                } 
+              }
+            },
             "Error": {
               "type": "object",
               "properties": {
@@ -207,6 +215,18 @@
                     }
                   }
                 }
+            },
+            "responses": {
+              "201": {
+                "description": "Resource created",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Created"
+                    }
+                  }
+                }
+              }
             },
             "security": [
               {
