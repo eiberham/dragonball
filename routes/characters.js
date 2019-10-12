@@ -5,6 +5,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Characters = mongoose.model('characters');
 const auth = require('../middleware/auth');
+const { check, body } = require('express-validator');
+const validate = require('../middleware/validate');
 
 router.get('/', (req, res, next) => {
     client.get('characters', (err, result) => {
@@ -38,7 +40,15 @@ router.get('/:name', (req, res, next) => {
     });
 });
 
-router.post('/', [auth], (req, res) => {
+router.post('/', [
+    auth, 
+    validate([
+        body('name').isAlphanumeric(), 
+        body('description').isString(),
+        body('avatar').isString()
+        .isURL()
+    ])
+], (req, res) => {
     const { 
         name, 
         description, 
@@ -58,7 +68,10 @@ router.post('/', [auth], (req, res) => {
       });
 });
 
-router.patch("/:id", [auth], (req, res) => {
+router.patch("/:id", [
+    auth, 
+    validate([check('id').isAlphanumeric()])
+], (req, res) => {
     const id = req.params.id;
     Characters.updateOne({_id: id}, (err, character) => {
         if (err) throw err;
@@ -68,7 +81,10 @@ router.patch("/:id", [auth], (req, res) => {
     })
 })
 
-router.delete("/:id", [auth], (req, res) => {
+router.delete("/:id", [
+    auth, 
+    validate([check('id').isAlphanumeric()])
+], (req, res) => {
     const id = req.params.id;
     Characters.deleteOne({_id: id}, (err, character) => {
         if (err) throw err;

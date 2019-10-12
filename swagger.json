@@ -103,6 +103,14 @@
                 } 
               }
             },
+            "Deleted": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                } 
+              }
+            },
             "Error": {
               "type": "object",
               "properties": {
@@ -259,6 +267,38 @@
               "application/xml",
               "application/json"
             ],
+            "responses": {
+              "200": {
+                "description": "Ok",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Deleted"
+                    }
+                  }
+                }
+              },
+              "404": {
+                  "description": "The specified resource was not found",
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#components/schemas/Error"
+                          }
+                      }
+                  }
+              },
+              "401": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#components/schemas/Error"
+                        }
+                    }
+                }
+              }
+            },
             "security": [
               {
                 "ApiKeyAuth": []
@@ -267,7 +307,7 @@
           },
           "patch": {
             "tags": ["Endpoints"],
-            "description": "Updating a character",
+            "description": "Updates a character",
             "operationId": "update_character",
             "parameters": [
               {
