@@ -11,7 +11,7 @@ const docs = require('./swagger.json');
 
 require('dotenv').config()
 
-mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 require('./models/users');
 require('./models/characters');

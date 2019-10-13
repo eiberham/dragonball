@@ -4,15 +4,22 @@ const mongoose = require('mongoose');
 const User = mongoose.model('users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const validate = require('../middleware/validate');
 const { 
-    body, 
-    sanitizeBody 
+    body
 } = require('express-validator');
 
 router.post('/', [ 
-    /* body('user').not().isEmpty().trim().escape().exists(),
-    body('password').not().isEmpty().trim().escape().exists(),
-    sanitizeBody('notifyOnReply').toBoolean()  */
+    validate([
+        body('user')
+        .not().isEmpty()
+        .trim().escape()
+        .exists(),
+        body('password')
+        .not().isEmpty()
+        .trim().escape()
+        .exists()
+    ])
 ], ( req, res ) => {
     
     const username = req.body.user;
