@@ -21,7 +21,6 @@ router.get('/', (req, res, next) => {
             })
         }
     })
-
 });
 
 router.get('/:name', (req, res, next) => {

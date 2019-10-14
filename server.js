@@ -16,10 +16,12 @@ mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: tru
 require('./models/users');
 require('./models/characters');
 require('./models/sagas');
+require('./models/films');
 
 const auth = require('./routes/auth');
 const characters = require('./routes/characters');
 const sagas = require('./routes/sagas');
+const films = require('./routes/films');
 
 const app = express();
 
@@ -53,6 +55,7 @@ app.get('/', (req, res, next) => {
 app.use('/api/auth', auth);
 app.use('/api/characters', characters);
 app.use('/api/sagas', sagas);
+app.use('/api/films', films);
 
 https.createServer({
     key: fs.readFileSync('./certs/key.pem'),
