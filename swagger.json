@@ -148,7 +148,7 @@
     "paths": {
         "/auth": {
             "post": {
-              "tags": ["Endpoints"],
+              "tags": ["Authentication"],
               "description": "This endpoint allows the user to authenticate and obtain interaction token",
               "operationId": "authenticate",
               "consumes": [
@@ -185,7 +185,7 @@
         },
         "/characters": {
           "get": {
-            "tags": ["Endpoints"],
+            "tags": ["Characters"],
             "description": "Get characters info",
             "operationId": "get_characters",
             "parameters": [],
@@ -223,7 +223,7 @@
             }
           },
           "post": {
-            "tags": ["Endpoints"],
+            "tags": ["Characters"],
             "description": "Create a character record",
             "operationId": "create_character",
             "consumes": [
@@ -265,7 +265,7 @@
         },
         "/characters/{id}": {
           "delete": {
-            "tags": ["Endpoints"],
+            "tags": ["Characters"],
             "description": "Deleting a character",
             "operationId": "delete_character",
             "parameters": [
@@ -326,7 +326,7 @@
             ]
           },
           "patch": {
-            "tags": ["Endpoints"],
+            "tags": ["Characters"],
             "description": "Updates a character",
             "operationId": "update_character",
             "parameters": [
@@ -357,7 +357,7 @@
         },
         "/characters/{name}": {
             "get": {
-                "tags": ["Endpoints"],
+                "tags": ["Characters"],
                 "description": "Get a single character info",
                 "operationId": "get_character",
                 "parameters": [
@@ -388,7 +388,7 @@
         },
         "/sagas": {
             "get": {
-                "tags": ["Endpoints"],
+                "tags": ["Sagas"],
                 "description": "Get sagas info",
                 "operationId": "get_sagas",
                 "parameters": [],
@@ -408,7 +408,7 @@
         },
         "/sagas/{name}": {
             "get": {
-                "tags": ["Endpoints"],
+                "tags": ["Sagas"],
                 "description": "Get a single saga info",
                 "operationId": "get_saga",
                 "parameters": [
@@ -427,7 +427,7 @@
         },
         "/films": {
           "get": {
-            "tags": ["Endpoints"],
+            "tags": ["Films"],
             "description": "Get a list of films",
             "operationId": "get_films",
             "responses": {

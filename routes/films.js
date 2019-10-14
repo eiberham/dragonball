@@ -21,7 +21,19 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/:name', (req, res, next) => {
-    res.send('this is a single film');
+    const name = req.params.name;
+    client.get(name, (err, result) => {
+        if(err) throw err;
+        if (result) {
+            res.send(result);
+        } else {
+            Films.findOne({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, film) => {
+                if(err) throw err;
+                client.setex(name, process.env.REDIS_EXP_TIME, JSON.stringify(film));
+                res.json(film);
+            });
+        }
+    });
 });
 
 module.exports = router;
