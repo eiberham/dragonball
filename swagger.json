@@ -95,6 +95,26 @@
                     }
                 }
             },
+            "Film": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "movies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "cover": {
+                  "type": "string"
+                }
+              }
+            },
             "Created": {
               "type": "object",
               "properties": {
@@ -404,6 +424,25 @@
                   }
                 ]
             }
+        },
+        "/films": {
+          "get": {
+            "tags": ["Endpoints"],
+            "description": "Get a list of films",
+            "operationId": "get_films",
+            "responses": {
+              "200": {
+                  "description": "Ok",
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/Film"
+                          }
+                      }
+                  }
+              }
+            }
+          }
         }
       },
       "securityDefinitions": {
