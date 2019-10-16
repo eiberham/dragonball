@@ -62,5 +62,3 @@ https.createServer({
     cert: fs.readFileSync('./certs/cert.pem'),
     passphrase: process.env.TSL_PASSPHRASE
 }, app).listen(port, () => console.log(chalk.blue(`Listening on port ${port}`)));
-
-module.exports = app;
