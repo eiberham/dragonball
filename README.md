@@ -15,6 +15,8 @@ The application is compound of the following features:
   <li>Fancy OAPI Front-end</li>
 </ol>
 
+As a side note endpoint tests via mocha and supertest packages were added for major robustness.
+
 This is the list of endpoints currently available:
 
 
