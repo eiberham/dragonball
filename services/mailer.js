@@ -1,36 +1,55 @@
-const nodemailer = require('nodemailer');
+const AWS = require('aws-sdk');
+
+const config = require('../config');
+
+AWS.config.update({
+    accessKeyId: config.aws.key,
+    secretAccessKey: config.aws.secret,
+    region: config.aws.ses.region
+});
 
 class Mailer {
-    options;
-    transporter;
 
-    constructor(from, to, subject, text){
-        this.options = {
-            from,
-            to,
-            subject,
-            text
-        }
+    constructor(){}
 
-        this.transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: process.env.MAIL_ACCOUNT,
-              pass: process.env.MAIL_PWD
-            }
+    sendEmail(from, to, subject, text){
+
+        const params = {
+            Destination: { /* required */
+              CcAddresses: [],
+              ToAddresses: [ ...to]
+            },
+            Message: { /* required */
+              Body: { /* required */
+                Html: {
+                 Charset: "UTF-8",
+                 Data: text
+                },
+                /* Text: {
+                 Charset: "UTF-8",
+                 Data: text
+                } */
+               },
+               Subject: {
+                Charset: 'UTF-8',
+                Data: subject
+               }
+              },
+            Source: from, /* required */
+            ReplyToAddresses: [
+               from
+            ],
+        };
+        
+        const ses = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+        ses.then(
+        function(data) {
+            console.log(data.MessageId);
+        }).catch(
+            function(err) {
+            console.error(err, err.stack);
         });
-    }
-
-    send(){
-        return new Promise((reject, resolve) => {
-            this.transporter.sendMail(this.options, function(error, info) {
-                if (error) {
-                  reject(error);
-                } else {
-                  resolve("Email successfully sent!");
-                }
-            });
-        })
     }
 }
 
