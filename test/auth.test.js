@@ -4,7 +4,7 @@ const supertest = require('supertest');
 const request = supertest('https://localhost:3000/api');
 
 describe('POST /auth', () => {
-    let data = 'user=acedeno&password=9b5Pt23wnI';
+    let data = 'user=test&password=test';
 
     it('respond with json containing an access token', done => {
         request.post('/auth')
