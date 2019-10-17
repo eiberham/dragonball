@@ -9,12 +9,12 @@ router.get('/', (req, res, next) => {
     client.get('sagas', (err, result) => {
         if(err) throw err;
         if( result ){
-            res.send(result);
+            res.status(200).json(JSON.parse(result));
         }else{
             Sagas.find({}, (err, sagas) => {
                 if(err) throw err;
                 client.setex('sagas', process.env.REDIS_EXP_TIME, JSON.stringify(sagas));
-                res.json(sagas);
+                res.status(200).json(sagas);
             });
         }
     })
@@ -25,12 +25,12 @@ router.get('/:name', (req, res, next) => {
     client.get(name, (err, result) => {
         if(err) throw err;
         if(result){
-            res.send(result);
+            res.status(200).json(JSON.parse(result));
         }else{
             Sagas.findOne({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, saga) => {
                 if(err) throw err;
                 client.setex(name, process.env.REDIS_EXP_TIME, JSON.stringify(saga));
-                res.json(saga);
+                res.status(200).json(saga);
             });
         }
     });

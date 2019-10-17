@@ -12,12 +12,12 @@ router.get('/', (req, res, next) => {
     client.get('characters', (err, result) => {
         if(err) throw err;
         if( result ){
-            res.send(result);
+            res.status(200).json(JSON.parse(result));
         }else{
             Characters.find({}, (err, characters) => {
                 if(err) throw err;
                 client.setex('characters', process.env.REDIS_EXP_TIME, JSON.stringify(characters));
-                res.json(characters);
+                res.status(200).json(characters);
             })
         }
     })
@@ -28,12 +28,12 @@ router.get('/:name', (req, res, next) => {
     client.get(name, (err, result) => {
         if(err) throw err;
         if (result) {
-            res.send(result);
+            res.status(200).json(JSON.parse(result));
         } else {
             Characters.findOne({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, character) => {
                 if(err) throw err;
                 client.setex(name, process.env.REDIS_EXP_TIME, JSON.stringify(character));
-                res.json(character);
+                res.status(200).json(character);
             });
         }
     });
