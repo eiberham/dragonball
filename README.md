@@ -13,6 +13,7 @@ The application is compound of the following features:
   <li>Clustering via pm2 package</li>
   <li>JWT authentication and routes protection</li>
   <li>Fancy OAPI Front-end</li>
+  <li>Notifications through AWS's SES</li>
 </ol>
 
 As a side note endpoint tests via mocha and supertest packages were added for major robustness.
