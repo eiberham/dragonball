@@ -9,12 +9,12 @@ router.get('/', (req, res, next) => {
     client.get('films', (err, result) => {
         if(err) throw err;
         if( result ){
-            res.send(result);
+            res.status(200).send(JSON.parse(result));
         }else{
             Films.find({}, (err, films) => {
                 if(err) throw err;
                 client.setex('films', process.env.REDIS_EXP_TIME, JSON.stringify(films));
-                res.json(films);
+                res.status(200).json(films);
             })
         }
     })
@@ -25,12 +25,12 @@ router.get('/:name', (req, res, next) => {
     client.get(name, (err, result) => {
         if(err) throw err;
         if (result) {
-            res.send(result);
+            res.status(200).send(JSON.parse(result));
         } else {
-            Films.findOne({'name': { $regex: new RegExp(`^${name}`, "i")}}, (err, film) => {
+            Films.findOne({'title': { $regex: new RegExp(`^${name}`, "i")}}, (err, film) => {
                 if(err) throw err;
                 client.setex(name, process.env.REDIS_EXP_TIME, JSON.stringify(film));
-                res.json(film);
+                res.status(200).json(film);
             });
         }
     });

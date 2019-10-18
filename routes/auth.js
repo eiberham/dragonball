@@ -25,29 +25,36 @@ router.post('/', [
     const username = req.body.user;
     const password = req.body.password;
 
+    
     User.findOne({
         'username': { $regex: new RegExp(`^${username}`, "i")}
     }, (err, user) => {
         if(err) throw err;
 
-        const hash = user.password;
+        if( user ) {
+            const hash = user.password;
 
-        bcrypt.compare(password, hash, (err, exists) => {
-            if(err) throw err;
-            if( exists ){
-                const payload = { 
-                    user: username
-                };
-            
-                jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
-                    if(err) throw err;
-                    res.status(200).json({
-                        message: 'Authenticated',
-                        token
-                    })
-                });
-            }
-        });
+            bcrypt.compare(password, hash, (err, exists) => {
+                if(err) throw err;
+                if( exists ){
+                    const payload = { 
+                        user: username
+                    };
+                
+                    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+                        if(err) throw err;
+                        res.status(200).json({
+                            message: 'Authenticated',
+                            token
+                        })
+                    });
+                }
+            });
+        } else {
+            res.status(401).json({
+                message: 'The user wasn\'t found.'
+            })
+        }
 
     });
 
