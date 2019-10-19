@@ -10,5 +10,9 @@ module.exports = {
             // e.g. us-west-2
             'region': 'us-west-2' 
         }
+    },
+    'redis': {
+        host: 'redis',
+        port: 6379
     }
 };

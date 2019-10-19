@@ -1,6 +1,6 @@
 const express = require('express');
 const redis = require('redis');
-const client = redis.createClient();
+const client = redis.createClient({host: 'redis'});
 const router = express.Router();
 const mongoose = require('mongoose');
 const Sagas = mongoose.model('sagas');

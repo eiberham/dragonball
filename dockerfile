@@ -1,8 +1,9 @@
 FROM node:10.16.0
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install --only=production
+RUN npm install
 # Bundle the app source
 COPY . .
+RUN npm install -g nodemon
 EXPOSE 3000
-CMD [ "npm", "start" ]
+CMD npm run dev

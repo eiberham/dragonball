@@ -1,12 +1,17 @@
 version: "3.0"
 services:
   express:
-    # specify the directory of the application containing of the Dockerfile
     build: .
     ports:
       - "3000:3000"
     links:
       - db
+      - redis
+  redis:
+    image: redis
+    container_name: cache
+    expose:
+      - 6379
   db:
     image: mongo
     ports:
