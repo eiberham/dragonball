@@ -67,10 +67,28 @@ This is the list of endpoints currently available:
 
 ## How to run it ?
 
-First, clone the repo:
+Before doing anything you should clone the repo:
 
 ```console
 foo@bar:~$ git clone https://github.com/wwleak/dragonball.git
+```
+
+There are two ways of running this project, if you like everything within a docker container you should first install docker and docker compose by running:
+
+
+```console
+foo@bar:~$ sudo apt-get install docker.io docker-compose
+```
+Then run compose:
+
+```console
+foo@bar:~$ docker-compose up
+```
+
+Otherwise, if you don't want to run multiple docker containers then go to the project directory you just cloned:
+
+```console
+foo@bar:~$ cd dragonball
 ```
 
 Then install all the dependencies
