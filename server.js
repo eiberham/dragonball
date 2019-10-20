@@ -1,4 +1,5 @@
 const express = require('express');
+const validator = require('express-validator');
 const https = require('https');
 const chalk = require('chalk');
 const fs = require('fs');
@@ -43,6 +44,18 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 app.use(helmet());
 
 app.use(pretty({ query: 'pretty' }));
+
+app.use(validator({
+    customValidators: {
+       isArray: function(value) {
+          return Array.isArray(value);
+       },
+       notEmpty: function(array) {
+          return array.length > 0;
+       }
+    }
+  }
+));
 
 app.set('json spaces', 4);
 

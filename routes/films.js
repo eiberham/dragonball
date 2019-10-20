@@ -1,6 +1,7 @@
 const express = require('express');
 const redis = require('redis');
-const client = redis.createClient({host: 'redis'});
+const config = require('../config');
+const client = redis.createClient({host: config.redis.host || 'localhost'});
 const router = express.Router();
 const mongoose = require('mongoose');
 const Films = mongoose.model('films');
@@ -33,6 +34,49 @@ router.get('/:name', (req, res, next) => {
                 res.status(200).json(film);
             });
         }
+    });
+});
+
+router.post('/', [
+    auth, 
+    validate([
+        body('title').isAlphanumeric(), 
+        body('description').isString(),
+        body('movies').isArray().notEmpty(),
+        body('cover').isString().isUrl()
+    ])
+], (req, res) => {
+    const { 
+        title, 
+        description, 
+        movies,
+        cover 
+    } = req.body;
+    
+    Films.create({
+        title,
+        description,
+        movies,
+        cover
+    }, function (err, film) {
+        if (err) throw err;
+        res.status(201)
+        .json({
+            message: 'Resource created'
+        });
+      });
+});
+
+router.delete("/:id", [
+    auth, 
+    validate([check('id').isAlphanumeric()])
+], (req, res) => {
+    const id = req.params.id;
+    Films.deleteOne({_id: id}, (err, film) => {
+        if (err) throw err;
+        res.status(200).json({
+            message: "Resource deleted"
+        });
     });
 });
 

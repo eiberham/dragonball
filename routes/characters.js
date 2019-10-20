@@ -1,6 +1,7 @@
 const express = require('express');
 const redis = require('redis');
-const client = redis.createClient({host: 'redis'});
+const config = require('../config');
+const client = redis.createClient({host: config.redis.host || 'localhost'});
 const router = express.Router();
 const mongoose = require('mongoose');
 const Characters = mongoose.model('characters');

@@ -1,6 +1,7 @@
 version: "3.0"
 services:
   express:
+    container_name: dragonball
     build: .
     ports:
       - "3000:3000"
@@ -14,5 +15,6 @@ services:
       - 6379
   db:
     image: mongo
+    container_name: mongo
     ports:
       - "27017:27017"
