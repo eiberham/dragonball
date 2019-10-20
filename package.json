@@ -6,7 +6,13 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "pm2 start server.js -i 0 -l logs/server.log",
-    "test": "mocha"
+    "test": "mocha",
+    "eslint": "eslint --ext=js",
+    "prettier": "prettier --write **/*.{js}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wwleak/dragonball.git"
   },
   "keywords": [
     "dragonball",
@@ -38,9 +44,16 @@
     "swagger-ui-express": "^4.1.1"
   },
   "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.1",
     "husky": "^3.0.9",
+    "lint-staged": "^10.0.0-0",
     "mocha": "^6.2.1",
     "nodemon": "^1.19.2",
+    "prettier": "^1.18.2",
     "should": "^13.2.3",
     "supertest": "^4.0.2"
   }

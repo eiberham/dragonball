@@ -5,6 +5,10 @@ const client = redis.createClient({host: config.redis.host || 'localhost'});
 const router = express.Router();
 const mongoose = require('mongoose');
 const Films = mongoose.model('films');
+const auth = require('../middleware/auth');
+const { check, body } = require('express-validator');
+const validate = require('../middleware/validate');
+
 
 router.get('/', (req, res, next) => {
     client.get('films', (err, result) => {
@@ -42,8 +46,8 @@ router.post('/', [
     validate([
         body('title').isAlphanumeric(), 
         body('description').isString(),
-        body('movies').isArray().notEmpty(),
-        body('cover').isString().isUrl()
+        body('movies').exists(),
+        body('cover').isString().isURL()
     ])
 ], (req, res) => {
     const { 

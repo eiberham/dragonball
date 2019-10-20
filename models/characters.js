@@ -7,4 +7,13 @@ const CharacterSchema = new Schema({
     avatar: String
 });
 
+CharacterSchema.pre('find', () => {
+    console.log("characters were queried");
+});
+
+CharacterSchema.post('save', () => {
+    // TODO: send mail
+    console.log("characters were saved");
+});
+
 mongoose.model('characters', CharacterSchema, 'characters');

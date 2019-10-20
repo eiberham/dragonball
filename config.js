@@ -8,11 +8,11 @@ module.exports = {
                 'default': '"Example.com" <noreply@example.com>', 
             },
             // e.g. us-west-2
-            'region': 'us-west-2' 
+            'region': 'us-east-1' 
         }
     },
     'redis': {
-        host: 'redis',
+        host: 'localhost',
         port: 6379
     }
 };
