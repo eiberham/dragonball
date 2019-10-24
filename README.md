@@ -4,6 +4,8 @@
   <img src="./dragonball.jpeg" alt="dragonball" />  
 </p>
 
+<img alt="GitHub" src="https://img.shields.io/github/license/wwleak/dragonball?style=for-the-badge">
+
 This is the dragon ball rest api, an idea to provide to anyone, relevant information about the anime.
 The application is compound of the following features:
 
