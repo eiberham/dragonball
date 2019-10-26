@@ -404,7 +404,41 @@
                         }
                     }
                 }
-            }
+            },
+            "post": {
+              "tags": ["Sagas"],
+              "description": "Create a new saga",
+              "operationId": "create_sagas",
+              "parameters": [],
+              "requestBody": {
+                "description": "Saga info",
+                "required": true,
+                "content": {
+                  "application/x-www-form-urlencoded": {
+                    "schema": {
+                      "$ref": "#components/schemas/Saga"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                  "201": {
+                    "description": "Resource created",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Created"
+                        }
+                      }
+                    }
+                  }
+              },
+              "security": [
+                {
+                  "ApiKeyAuth": []
+                }
+              ]
+          }
         },
         "/sagas/{name}": {
             "get": {
@@ -425,6 +459,69 @@
                 ]
             }
         },
+        "/sagas/{id}": {
+          "delete": {
+            "tags": ["Sagas"],
+            "description": "Deleting a saga",
+            "operationId": "delete_saga",
+            "parameters": [
+              {
+                  "name": "id",
+                  "in": "path",
+                  "description": "ID of the saga",
+                  "required": true,
+                  "schema": {
+                      "type": "string"
+                  },
+                  "style": "simple"
+              }
+            ],
+            "consumes": [
+              "application/x-www-form-urlencoded"
+            ],
+            "produces": [
+              "application/xml",
+              "application/json"
+            ],
+            "responses": {
+              "200": {
+                "description": "Ok",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Deleted"
+                    }
+                  }
+                }
+              },
+              "404": {
+                  "description": "The specified resource was not found",
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#components/schemas/Error"
+                          }
+                      }
+                  }
+              },
+              "401": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#components/schemas/Error"
+                        }
+                    }
+                }
+              }
+            },
+            "security": [
+              {
+                "ApiKeyAuth": []
+              }
+            ]
+          }
+        },
         "/films": {
           "get": {
             "tags": ["Films"],
@@ -442,8 +539,137 @@
                   }
               }
             }
+          },
+          "post": {
+            "tags": ["Films"],
+              "description": "Create a new film",
+              "operationId": "create_film",
+              "parameters": [],
+              "requestBody": {
+                "description": "Film info",
+                "required": true,
+                "content": {
+                  "application/x-www-form-urlencoded": {
+                    "schema": {
+                      "$ref": "#components/schemas/Film"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                  "201": {
+                    "description": "Resource created",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Created"
+                        }
+                      }
+                    }
+                  }
+              },
+              "security": [
+                {
+                  "ApiKeyAuth": []
+                }
+              ]
+          }
+        },
+        "/films/{name}": {
+          "get": {
+              "tags": ["Films"],
+              "description": "Get a single film info",
+              "operationId": "get_film",
+              "parameters": [
+                  {
+                      "name": "name",
+                      "in": "path",
+                      "description": "Name of the film being searched",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      },
+                      "style": "simple"
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Ok",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/Film"
+                          }
+                        }
+                      }
+                  }
+              }
+          }
+        },
+        "/films/{id}": {
+          "delete": {
+            "tags": ["Films"],
+            "description": "Deleting a film",
+            "operationId": "delete_film",
+            "parameters": [
+              {
+                  "name": "id",
+                  "in": "path",
+                  "description": "ID of the film",
+                  "required": true,
+                  "schema": {
+                      "type": "string"
+                  },
+                  "style": "simple"
+              }
+            ],
+            "consumes": [
+              "application/x-www-form-urlencoded"
+            ],
+            "produces": [
+              "application/xml",
+              "application/json"
+            ],
+            "responses": {
+              "200": {
+                "description": "Ok",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Deleted"
+                    }
+                  }
+                }
+              },
+              "404": {
+                  "description": "The specified resource was not found",
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#components/schemas/Error"
+                          }
+                      }
+                  }
+              },
+              "401": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#components/schemas/Error"
+                        }
+                    }
+                }
+              }
+            },
+            "security": [
+              {
+                "ApiKeyAuth": []
+              }
+            ]
           }
         }
+        
       },
       "securityDefinitions": {
         "api_key": {
