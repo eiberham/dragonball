@@ -88,33 +88,36 @@ Before doing anything you should clone the repo:
 foo@bar:~$ git clone https://github.com/wwleak/dragonball.git
 ```
 
-There are two ways of running this project, if you like everything within a docker container you should first install docker and docker compose by running:
-
+You should first install docker and docker compose by running:
 
 ```console
 foo@bar:~$ sudo apt-get install docker.io docker-compose
 ```
-Then run compose:
+Then log into your docker hub account by typing:
+
+```console
+foo@bar:~$ docker login
+```
+### Important
+
+If for any reason, you come across with the following error while trying to log in (as i did) ...
+
+```
+`Error saving credentials: error storing credentials - err: exit status 1, out: `Error calling StartServiceByName for org.freedesktop.secrets: Timeout was reached``
+```
+
+... I could solve that by installing the following packages:
+
+ ```console
+foo@bar:~$ sudo apt install gnupg2 pass
+```
+
+Finally run compose:
 
 ```console
 foo@bar:~$ docker-compose up
 ```
 
-Otherwise, if you don't want to run multiple docker containers then go to the project directory you just cloned:
-
-```console
-foo@bar:~$ cd dragonball
-```
-
-Then install all the dependencies
-
-```console
-foo@bar:~$ npm i 
-```
-And lastly run
-
-```console
-foo@bar:~$ npm run dev
-```
+Enjoy life!
 
 <p align="right">MADE WITH ❤ BY ABRAHAM</p>
