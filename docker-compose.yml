@@ -8,6 +8,7 @@ services:
     links:
       - db
       - redis
+      - seed
   redis:
     image: redis
     container_name: cache
@@ -18,3 +19,18 @@ services:
     container_name: mongo
     ports:
       - "27017:27017"
+  seed:
+    image: pkosiec/mongo-seeding
+    environment:
+      - DROP_DATABASE=true
+      - REPLACE_ID=true
+      - DB_HOST=db
+      - DB_NAME=dragonball
+      - DB_PORT=27017
+    volumes:
+      - ./data:/data
+    working_dir: /data
+    links: 
+      - db
+    depends_on:
+      - db
