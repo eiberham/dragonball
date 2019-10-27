@@ -74,6 +74,11 @@ This is the list of endpoints currently available:
   </tbody>
 </table>
 
+There's a OAPI resource to test all the endpoints, you have to log yourself in in order to test those endpoints who are protected. This is how the swagger page looks like:
+
+<p align="center">
+  <img src="./swagger.png" alt="swagger" />  
+</p>
 
 ## How to run it ?
 
