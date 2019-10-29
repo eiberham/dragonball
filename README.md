@@ -66,10 +66,22 @@ This is the list of endpoints currently available:
       <td>GET</td><td>/sagas/:name</td><td>Get a single saga</td><td>Public</td>
     </tr>
     <tr>
+      <td>POST</td><td>/sagas</td><td>Create a saga</td><td>Protected</td>
+    </tr>
+    <tr>
+      <td>DELETE</td><td>/sagas/:id</td><td>Delete a saga</td><td>Protected</td>
+    </tr>
+    <tr>
       <td>GET</td><td>/films</td><td>Get a list of related films</td><td>Public</td>
     </tr>
     <tr>
       <td>GET</td><td>/films/:name</td><td>Get info about a single film</td><td>Public</td>
+    </tr>
+    <tr>
+      <td>POST</td><td>/films</td><td>Create a film</td><td>Protected</td>
+    </tr>
+    <tr>
+      <td>DELETE</td><td>/films/:id</td><td>Delete a film</td><td>Protected</td>
     </tr>
   </tbody>
 </table>
@@ -119,5 +131,9 @@ foo@bar:~$ docker-compose up
 ```
 
 Enjoy life!
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 <p align="right">MADE WITH ❤ BY ABRAHAM</p>
