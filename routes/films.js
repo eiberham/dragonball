@@ -1,15 +1,18 @@
 const express = require("express");
 const redis = require("redis");
+const { check, body } = require("express-validator");
+const mongoose = require("mongoose");
 const config = require("../config");
+
 const client = redis.createClient({ host: config.redis.host });
 const router = express.Router();
-const mongoose = require("mongoose");
+
 const Films = mongoose.model("films");
 const auth = require("../middleware/auth");
-const { check, body } = require("express-validator");
+
 const validate = require("../middleware/validate");
 
-router.get("/", (req, res, next) => {
+router.get("/", (req, res) => {
     client.get("films", (err, result) => {
         if (err) throw err;
         if (result) {
@@ -28,7 +31,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.get("/:name", (req, res, next) => {
+router.get("/:name", (req, res) => {
     const { name } = req.params;
     client.get(name, (err, result) => {
         if (err) throw err;

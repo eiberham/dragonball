@@ -1,15 +1,18 @@
 const express = require("express");
 const redis = require("redis");
+const mongoose = require("mongoose");
+const { check, body } = require("express-validator");
 const config = require("../config");
+
 const client = redis.createClient({ host: config.redis.host });
 const router = express.Router();
-const mongoose = require("mongoose");
+
 const Sagas = mongoose.model("sagas");
 const auth = require("../middleware/auth");
-const { check, body } = require("express-validator");
+
 const validate = require("../middleware/validate");
 
-router.get("/", (req, res, next) => {
+router.get("/", (req, res) => {
     client.get("sagas", (err, result) => {
         if (err) throw err;
         if (result) {
@@ -28,7 +31,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.get("/:name", (req, res, next) => {
+router.get("/:name", (req, res) => {
     const { name } = req.params;
     client.get(name, (err, result) => {
         if (err) throw err;
@@ -86,7 +89,7 @@ router.delete(
     "/:id",
     [auth, validate([check("id").isAlphanumeric()])],
     (req, res) => {
-        const {id} = req.params;
+        const { id } = req.params;
         Sagas.deleteOne({ _id: id }, (err, saga) => {
             if (err) throw err;
             res.status(200).json({
