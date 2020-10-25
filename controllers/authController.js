@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken");
 
 module.exports = {
     authUser: (username, password) => {
-        return User.findOne(
+        return new Promise((resolve, reject) => {
+            User.findOne(
             {
                 username: { $regex: new RegExp(`^${username}`, "i") }
             },
@@ -29,17 +30,18 @@ module.exports = {
                                 { expiresIn: "1h" },
                                 (err, token) => {
                                     if (err) throw err;
-                                    return {
+                                    resolve({
                                         message: "Authenticated",
                                         token
-                                    };
+                                    });
                                 }
                             );
                         }
                     });
                 } else {
-                    throw new Error('The user wasn\'t found.')
+                    reject('The user wasn\'t found.')
                 }
-            }
-    },
+            })
+        })
+    }
 }
