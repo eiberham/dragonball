@@ -123,6 +123,17 @@ If for any reason, you come across with the following error while trying to log 
 foo@bar:~$ sudo apt install gnupg2 pass
 ```
 
+...Or if you face an error like this
+
+```console
+ERROR: for db Cannot start service db: driver failed programming external connectivity on endpoint 
+```
+Just run
+
+ ```console
+foo@bar:~$ service mongodb stop 
+ ```
+
 Finally run compose:
 
 ```console
