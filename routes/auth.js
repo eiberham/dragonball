@@ -3,11 +3,13 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const User = mongoose.model("users");
+/* const User = mongoose.model("users");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken"); */
 const { body } = require("express-validator");
 const validate = require("../middleware/validate");
+
+const authController = require('../controllers/authController');
 
 router.post(
     "/",
@@ -31,7 +33,16 @@ router.post(
         const username = req.body.user;
         const { password } = req.body;
 
-        User.findOne(
+        try {
+            const response = authController.authUser(username, password)
+            res.status(200).json(response);
+        } catch (error) {
+            res.status(401).json({
+                message: error
+            });
+        }
+
+        /* User.findOne(
             {
                 username: { $regex: new RegExp(`^${username}`, "i") }
             },
@@ -68,7 +79,7 @@ router.post(
                     });
                 }
             }
-        );
+        ); */
     }
 );
 
