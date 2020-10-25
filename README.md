@@ -92,7 +92,7 @@ There's a OAPI resource to test all the endpoints, you have to log yourself in i
   <img src="./swagger.png" alt="swagger" />  
 </p>
 
-## How to run it ?
+## :rocket: How to run it ?
 
 Before doing anything you should clone the repo:
 
@@ -110,7 +110,7 @@ Then log into your docker hub account by typing:
 ```console
 foo@bar:~$ docker login
 ```
-### Important
+### :warning: Important
 
 If for any reason, you come across with the following error while trying to log in (as i did) ...
 
@@ -132,7 +132,10 @@ foo@bar:~$ docker-compose up
 
 Enjoy life!
 
-## License
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+## :pushpin: License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 

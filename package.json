@@ -36,7 +36,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^1.6.0",
     "mongodb": "^3.3.2",
-    "mongoose": "^5.7.0",
+    "mongoose": "^5.7.5",
     "nodemailer": "^6.3.1",
     "pm2": "^4.0.0",
     "redis": "^2.8.0",
