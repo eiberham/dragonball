@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-    authUser: (username, password) => {
+    login: (username, password) => {
         return new Promise((resolve, reject) => {
             User.findOne(
             {
