@@ -1,57 +1,35 @@
 const express = require("express");
-const redis = require("redis");
 const { check, body } = require("express-validator");
-const mongoose = require("mongoose");
-const config = require("../config");
 
-const client = redis.createClient({ host: config.redis.host });
 const router = express.Router();
-
-const Films = mongoose.model("films");
 const auth = require("../middleware/auth");
 
 const validate = require("../middleware/validate");
 
-router.get("/", (req, res) => {
-    client.get("films", (err, result) => {
-        if (err) throw err;
-        if (result) {
-            res.status(200).send(JSON.parse(result));
-        } else {
-            Films.find({}, (err, films) => {
-                if (err) throw err;
-                client.setex(
-                    "films",
-                    process.env.REDIS_EXP_TIME,
-                    JSON.stringify(films)
-                );
-                res.status(200).json(films);
-            });
-        }
-    });
+const films = require('../controllers/films');
+
+router.get("/", async (req, res) => {
+    try {
+        const response = await films.getAll();
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(401).json({
+            message: error
+        });
+    }
 });
 
-router.get("/:name", (req, res) => {
+router.get("/:name", async (req, res) => {
     const { name } = req.params;
-    client.get(name, (err, result) => {
-        if (err) throw err;
-        if (result) {
-            res.status(200).send(JSON.parse(result));
-        } else {
-            Films.findOne(
-                { title: { $regex: new RegExp(`^${name}`, "i") } },
-                (err, film) => {
-                    if (err) throw err;
-                    client.setex(
-                        name,
-                        process.env.REDIS_EXP_TIME,
-                        JSON.stringify(film)
-                    );
-                    res.status(200).json(film);
-                }
-            );
-        }
-    });
+
+    try {
+        const response = await films.get(name);
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(401).json({
+            message: error
+        });
+    }
 });
 
 router.post(
@@ -67,37 +45,34 @@ router.post(
                 .isURL()
         ])
     ],
-    (req, res) => {
+    async (req, res) => {
         const { title, description, movies, cover } = req.body;
 
-        Films.create(
-            {
-                title,
-                description,
-                movies,
-                cover
-            },
-            (err, film) => {
-                if (err) throw err;
-                res.status(201).json({
-                    message: "Resource created"
-                });
-            }
-        );
+        try {
+            const response = await films.create(title, description, movies, cover);
+            res.status(200).json(response);
+        } catch (error) {
+            res.status(401).json({
+                message: error
+            });
+        }
     }
 );
 
 router.delete(
     "/:id",
     [auth, validate([check("id").isAlphanumeric()])],
-    (req, res) => {
+    async (req, res) => {
         const { id } = req.params;
-        Films.deleteOne({ _id: id }, (err, film) => {
-            if (err) throw err;
-            res.status(200).json({
-                message: "Resource deleted"
+
+        try {
+            const response = await films.delete(id);
+            res.status(200).json(response);
+        } catch (err) {
+            res.status(422).json({
+                message: err
             });
-        });
+        }
     }
 );
 
