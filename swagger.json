@@ -123,6 +123,14 @@
                 } 
               }
             },
+            "Updated": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                } 
+              }
+            },
             "Deleted": {
               "type": "object",
               "properties": {
@@ -348,6 +356,29 @@
               "application/xml",
               "application/json"
             ],
+            "requestBody": {
+              "description": "Character info",
+              "required": true,
+              "content": {
+                "application/x-www-form-urlencoded": {
+                  "schema": {
+                    "$ref": "#components/schemas/Character"
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Resource updated",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Updated"
+                    }
+                  }
+                }
+              }
+            },
             "security": [
               {
                 "ApiKeyAuth": []

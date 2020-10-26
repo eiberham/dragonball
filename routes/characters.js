@@ -34,7 +34,7 @@ router.post(
     [
         auth,
         validate([
-            body("name").isAlphanumeric(),
+            body("name").isString(),
             body("description").isString(),
             body("avatar")
                 .isString()

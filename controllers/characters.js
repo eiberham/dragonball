@@ -10,7 +10,7 @@ module.exports = {
     getAll: () => {
         return new Promise((resolve, reject) => {
             client.get("characters", (err, result) => {
-                if (err) throw err;
+                if (err) reject(err);
                 if (result) {
                     resolve(JSON.parse(result));
                 } else {
@@ -30,7 +30,7 @@ module.exports = {
     get: (name) => {
         return new Promise((resolve, reject) => {
             client.get(name, (err, result) => {
-                if (err) throw err;
+                if (err) reject(err);
                 if (result) {
                     resolve(JSON.parse(result));
                 } else {
