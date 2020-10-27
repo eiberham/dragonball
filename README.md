@@ -185,7 +185,7 @@ foo@bar sudo service docker start
 Finally run
 
 ```console
-foo@bar sudo service docker start
+foo@bar sudo docker-compose up
 ```
 
 Done!
