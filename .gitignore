@@ -89,3 +89,6 @@ typings/
 
 # Jetbrains IDE
 .idea/
+
+# aws key pair
+dragonball.pem

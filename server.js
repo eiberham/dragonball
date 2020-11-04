@@ -5,9 +5,15 @@ const fs = require("fs");
 const helmet = require("helmet");
 const port = process.env.PORT || 3000;
 const pretty = require("express-prettify");
+const ratelimit = require('express-rate-limit');
 const mongoose = require("mongoose");
 const ui = require("swagger-ui-express");
 const docs = require("./swagger.json");
+
+const limiter = ratelimit({
+    windowMs: 15 * 60 * 100,
+    max: 20
+});
 
 require("dotenv").config();
 
@@ -29,6 +35,7 @@ const films = require("./routes/films");
 
 const app = express();
 
+app.use(limiter);
 app.use((req, res, next) => {
     res.append("Access-Control-Allow-Origin", req.headers.origin || "*");
     res.append("Access-Control-Allow-Credentials", "true");

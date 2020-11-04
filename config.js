@@ -12,7 +12,7 @@ module.exports = {
         }
     },
     redis: {
-        host: "localhost", //redis
+        host: "redis", //localhost
         port: 6379
     }
 };
