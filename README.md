@@ -107,7 +107,7 @@ foo@bar:~$ sudo apt-get install docker.io docker-compose
 Then log into your docker hub account by typing:
 
 ```console
-foo@bar:~$ docker login
+foo@bar:~$ docker login --username YOUR_USERNAME --password YOUR_PASSWORD
 ```
 ### :warning: Important
 
@@ -139,8 +139,56 @@ Finally run compose:
 ```console
 foo@bar:~$ docker-compose up
 ```
+## :airplane: Deploy
+In order to deploy it to the cloud, for example to an EC2 Instance over AWS:
 
-Enjoy life!
+First off you gotta make sure you downloaded the EC2 Instance's key pair to a safe place in your computer.
+
+Then you should give it proper permissions by running:
+
+```console
+foo@bar:~$ chmod 400 dragonball.pem
+```
+
+Next step is to delete the node_modules folder directory of your project:
+
+```console
+foo@bar:~$ rm -rf node_modules
+```
+
+Next step is to copy your project files:
+
+```console
+foo@bar:~$ scp -r -i dragonball.pem ~/dragonball ec2-user@8.32.145.3:~/
+```
+
+Next step is to connect to the EC2 instance via SSH:
+
+```console
+foo@bar:~$ ssh -i dragonball.pem ec2-user@8.32.145.3
+```
+Then run the commands below once you're successfully connected to install docker.
+
+```console
+sudo yum update
+sudo yum install docker
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-`uname -s`-`uname -m` | sudo tee /usr/local/bin/docker-compose > /dev/null
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+```
+Now start the docker service.
+
+```console
+foo@bar sudo service docker start
+```
+
+Finally run
+
+```console
+foo@bar sudo docker-compose up
+```
+
+Done!
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
