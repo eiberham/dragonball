@@ -5,7 +5,7 @@
         "es6": true
     },
     "extends": [
-        "airbnb-base", "prettier"
+        "airbnb-base", "prettier", "plugin:jsdoc/recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -14,8 +14,14 @@
     "parserOptions": {
         "ecmaVersion": 2018
     },
-    "plugins": ["prettier"],
+    "plugins": ["prettier", "jsdoc"],
     "rules": {
-        "prettier/prettier": ["error"]
+        "prettier/prettier": ["error"],
+        "jsdoc/require-jsdoc": [
+            1,
+            { "contexts": ["ClassDeclaration", "ClassProperty", "FunctionDeclaration"
+                ]
+            }
+        ]
     }
 }

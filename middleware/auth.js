@@ -3,6 +3,15 @@ const mongoose = require("mongoose");
 const User = mongoose.model("users");
 const jwt = require("jsonwebtoken");
 
+/**
+ * The auth middleware.
+ *
+ * @param {*} req the http request
+ * @param {*} res the http response
+ * @param {*} next
+ *
+ * @returns {void}
+ */
 module.exports = (req, res, next) => {
     const token = req.headers["x-access-token"];
 

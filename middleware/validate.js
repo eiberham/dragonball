@@ -1,5 +1,11 @@
 const { validationResult } = require("express-validator");
 
+/**
+ * Validations middleware.
+ *
+ * @param {Array} validations
+ * @returns {json}
+ */
 const validate = validations => {
     return async (req, res, next) => {
         await Promise.all(validations.map(validation => validation.run(req)));
