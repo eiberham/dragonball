@@ -1,0 +1,11 @@
+setup:
+  addons:
+    - plan: mongolab:sandbox
+      as: mongo
+    - plan: heroku-redis:hobby-dev
+      as: cache
+  config:
+    S3_BUCKET: my-example-bucket
+build:
+  docker:
+    web: Dockerfile
