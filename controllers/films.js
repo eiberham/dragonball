@@ -1,8 +1,8 @@
 const redis = require("redis");
+const mongoose = require("mongoose");
 const config = require("../config");
 
 const client = redis.createClient({ host: config.redis.host });
-const mongoose = require("mongoose");
 
 const Films = mongoose.model("films");
 

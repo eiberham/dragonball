@@ -3,9 +3,12 @@ const https = require("https");
 const chalk = require("chalk");
 const fs = require("fs");
 const helmet = require("helmet");
+const winston = require("winston");
+const expresswinston = require("express-winston");
+
 const port = process.env.PORT || 3000;
 const pretty = require("express-prettify");
-const ratelimit = require('express-rate-limit');
+const ratelimit = require("express-rate-limit");
 const mongoose = require("mongoose");
 const ui = require("swagger-ui-express");
 const docs = require("./swagger.json");
@@ -36,6 +39,24 @@ const films = require("./routes/films");
 const app = express();
 
 app.use(limiter);
+
+app.use(
+    expresswinston.logger({
+        transports: [new winston.transports.Console()],
+        format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.json()
+        ),
+        meta: true, // optional: control whether you want to log the meta data about the request (default to true)
+        msg: "http {{req.method}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+        expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
+        colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
+        ignoreRoute(req, res) {
+            return false;
+        } // optional: allows to skip some log messages based on request and/or response
+    })
+);
+
 app.use((req, res, next) => {
     res.append("Access-Control-Allow-Origin", req.headers.origin || "*");
     res.append("Access-Control-Allow-Credentials", "true");

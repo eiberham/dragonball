@@ -8,8 +8,8 @@ module.exports = {
     /**
      * Logs the user in.
      *
-     * @param {*} username the username.
-     * @param {*} password the password.
+     * @param {string} username the username.
+     * @param {string} password the password.
      * @returns {Promise} Promise object with the jwt of the authenticated user.
      */
     login: (username, password) => {
