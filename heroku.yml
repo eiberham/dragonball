@@ -1,11 +1,18 @@
+# heroku manifest file.
+
 setup:
   addons:
     - plan: mongolab:sandbox
       as: mongo
     - plan: heroku-redis:hobby-dev
       as: cache
-  config:
-    S3_BUCKET: my-example-bucket
 build:
   docker:
-    web: Dockerfile
+    web: dockerfile
+release:
+  # intended for migrations ?
+  image: web
+  command:
+    - echo 'Starting dragonball web service after deployment';
+run:
+  web: npm start
