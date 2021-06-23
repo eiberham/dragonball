@@ -1,9 +1,10 @@
 # heroku manifest file.
+# guidelines: https://devcenter.heroku.com/articles/build-docker-images-heroku-yml#creating-your-app-from-setup
+# got stuck at heroku create dballapi --manifest due to mongolab add-on being deprecated.
+# i need to verify my account by adding a credit card on heroku.
 
 setup:
   addons:
-    - plan: mongolab:sandbox
-      as: mongo
     - plan: heroku-redis:hobby-dev
       as: cache
 build:
