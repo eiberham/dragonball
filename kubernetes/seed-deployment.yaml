@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o kubernetes/
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: seed
+  name: seed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: seed
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o kubernetes/
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: seed
+    spec:
+      containers:
+        - env:
+            - name: DB_HOST
+              value: db
+            - name: DB_NAME
+              value: dragonball
+            - name: DB_PORT
+              value: "27017"
+            - name: DROP_DATABASE
+              value: "true"
+            - name: REPLACE_ID
+              value: "true"
+          image: pkosiec/mongo-seeding
+          name: seed
+          resources: {}
+          volumeMounts:
+            - mountPath: /data
+              name: seed-claim0
+          workingDir: /data
+      restartPolicy: Always
+      volumes:
+        - name: seed-claim0
+          persistentVolumeClaim:
+            claimName: seed-claim0
+status: {}

@@ -179,16 +179,58 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 Now start the docker service.
 
 ```console
-foo@bar sudo service docker start
+foo@bar:~$ sudo service docker start
 ```
 
 Finally run
 
 ```console
-foo@bar sudo docker-compose up
+foo@bar:~$ sudo docker-compose up
 ```
 
 Done!
+
+## :ship: Kubernetes
+
+Alternatively if you want to run it in a kubernetes cluster in your host machine do the following 
+(tested on mac os):
+
+Install minikube
+
+```console
+foo@bar:~$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+foo@bar:~$ sudo install minikube-darwin-amd64 /usr/local/bin/minikube
+```
+Start your cluster
+
+```console
+foo@bar:~$ minikube start
+```
+
+Install kompose
+
+```console
+foo@bar:~$ curl -L https://github.com/kubernetes/kompose/releases/download/v1.22.0/kompose-darwin-amd64 -o kompose
+foo@bar:~$ chmod +x kompose
+foo@bar:~$ sudo mv ./kompose /usr/local/bin/kompose
+```
+
+Convert the docker-compose.yml file into files that can be used by kubectl and store them within the kubernetes 
+directory.
+
+```console
+foo@bar:~$ kompose convert -o kubernetes/
+```
+
+Run the kubectl apply -f command over all the generated manifests files inside the kubernetes directory
+
+```console
+foo@bar:~$ cd kubernetes
+foo@bar:~$ kubectl apply -f express-service.yaml
+foo@bar:~$ kubectl apply -f redis-deployment.yaml
+foo@bar:~$ kubectl apply -f db-service.yaml
+foo@bar:~$ kubectl apply -f seed-deployment.yaml
+```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
