@@ -204,7 +204,7 @@ foo@bar:~$ sudo install minikube-darwin-amd64 /usr/local/bin/minikube
 Start your cluster
 
 ```console
-foo@bar:~$ minikube start
+foo@bar:~$ minikube start --nodes 3 -p dragonball
 ```
 
 Install kompose
@@ -230,6 +230,18 @@ foo@bar:~$ kubectl apply -f express-service.yaml
 foo@bar:~$ kubectl apply -f redis-deployment.yaml
 foo@bar:~$ kubectl apply -f db-service.yaml
 foo@bar:~$ kubectl apply -f seed-deployment.yaml
+```
+
+To find out which cluster kubectl is connected to run the following command
+
+```console
+foo@bar:~$ kubectl config get-contexts
+```
+
+In my case it showed the following list, as I had docker desktop installed, so I had to switch to minikube
+
+```console
+foo@bar:~$ kubectl config use-context minikube
 ```
 
 ## Contributing

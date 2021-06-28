@@ -9,6 +9,8 @@ services:
       - db
       - redis
       - seed
+    expose:
+      - 3000
   redis:
     image: redis
     container_name: cache
@@ -19,6 +21,8 @@ services:
     container_name: mongo
     ports:
       - "27017:27017"
+    expose:
+      - 27017
   seed:
     image: pkosiec/mongo-seeding
     environment:
