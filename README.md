@@ -215,21 +215,16 @@ foo@bar:~$ chmod +x kompose
 foo@bar:~$ sudo mv ./kompose /usr/local/bin/kompose
 ```
 
-Convert the docker-compose.yml file into files that can be used by kubectl and store them within the kubernetes 
-directory.
+Convert the docker-compose.yml file into a manifest file that can be used by kubectl..
 
 ```console
-foo@bar:~$ kompose convert -o kubernetes/
+foo@bar:~$ kompose convert -f docker-compose.yaml -o kubemanifest.yaml
 ```
 
 Run the kubectl apply -f command over all the generated manifests files inside the kubernetes directory
 
 ```console
-foo@bar:~$ cd kubernetes
-foo@bar:~$ kubectl apply -f express-service.yaml
-foo@bar:~$ kubectl apply -f redis-deployment.yaml
-foo@bar:~$ kubectl apply -f db-service.yaml
-foo@bar:~$ kubectl apply -f seed-deployment.yaml
+foo@bar:~$ kubectl apply -f kubemanifest.yaml
 ```
 
 To find out which cluster kubectl is connected to run the following command
