@@ -6,7 +6,7 @@ const auth = require("../middleware/auth");
 
 const validate = require("../middleware/validate");
 
-const films = require('../controllers/films');
+const films = require("../controllers/films");
 
 router.get("/", async (req, res) => {
     try {
@@ -49,7 +49,12 @@ router.post(
         const { title, description, movies, cover } = req.body;
 
         try {
-            const response = await films.create(title, description, movies, cover);
+            const response = await films.create(
+                title,
+                description,
+                movies,
+                cover
+            );
             res.status(200).json(response);
         } catch (error) {
             res.status(401).json({

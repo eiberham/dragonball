@@ -2,7 +2,8 @@ version: "3.0"
 services:
   express:
     container_name: dragonball
-    build: .
+    image: acedeno/dragonball:v1
+#    build: .
     ports:
       - "3000:3000"
     links:

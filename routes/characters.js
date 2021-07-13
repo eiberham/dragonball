@@ -1,10 +1,11 @@
 const express = require("express");
 const { check, body, oneOf, validationResult } = require("express-validator");
+
 const router = express.Router();
 const auth = require("../middleware/auth");
 const validate = require("../middleware/validate");
 
-const characters = require('../controllers/characters');
+const characters = require("../controllers/characters");
 
 router.get("/", async (req, res) => {
     try {

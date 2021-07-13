@@ -1,11 +1,12 @@
 const express = require("express");
 const { check, body } = require("express-validator");
+
 const router = express.Router();
 const auth = require("../middleware/auth");
 
 const validate = require("../middleware/validate");
 
-const sagas = require('../controllers/sagas');
+const sagas = require("../controllers/sagas");
 
 router.get("/", async (req, res) => {
     try {
@@ -62,7 +63,7 @@ router.delete(
     [auth, validate([check("id").isAlphanumeric()])],
     async (req, res) => {
         const { id } = req.params;
-        
+
         try {
             const response = await sagas.delete(id);
             res.status(200).json(response);

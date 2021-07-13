@@ -139,6 +139,17 @@ Finally run compose:
 ```console
 foo@bar:~$ docker-compose up
 ```
+
+## :anchor: DockerHub
+
+If you wish to push the docker image to your docker hub account simply build the image and push it e.g:
+
+```console
+ foo@bar:~$ docker build -t username/dragonball:tag .
+ foo@bar:~$ docker login
+ foo@bar:~$ docker push username/dragonball:tag
+```
+
 ## :airplane: Deploy
 In order to deploy it to the cloud, for example to an EC2 Instance over AWS:
 
@@ -193,7 +204,7 @@ Done!
 ## :ship: Kubernetes
 
 Alternatively if you want to run it in a kubernetes cluster in your host machine do the following 
-(tested on mac os):
+(tested on mac os with docker desktop):
 
 Install minikube
 
@@ -207,6 +218,33 @@ Start your cluster
 foo@bar:~$ minikube start --nodes 3 -p dragonball
 ```
 
+Or if you wish to start it from a virtual machine like virtual box instead
+
+```console
+foo@bar:~$ minikube start --vm=true --vm-driver=virtualbox
+```
+
+To access your virtual machine from minikube simply run 
+
+```console
+foo@bar:~$ minikube ssh
+```
+
+To list and enable minikube addons (e.g. ingress addon):
+
+```console
+foo@bar:~$ minikube addons list
+foo@bar:~$ minikube addons enable ingress
+```
+
+To delete service, deployment and ingress:
+
+```console
+foo@bar:~$ kubectl delete deployment web-deployment
+foo@bar:~$ kubectl delete service web-service
+foo@bar:~$ kubectl delete ingress web-ingress
+```
+
 Install kompose
 
 ```console
@@ -218,13 +256,13 @@ foo@bar:~$ sudo mv ./kompose /usr/local/bin/kompose
 Convert the docker-compose.yml file into a manifest file that can be used by kubectl..
 
 ```console
-foo@bar:~$ kompose convert -f docker-compose.yaml -o kubemanifest.yaml
+foo@bar:~$ kompose convert -f docker-compose.yml -o kubemanifest.yml
 ```
 
-Run the kubectl apply -f command over all the generated manifests files inside the kubernetes directory
+Run the kubectl apply -f command over the generated manifest file.
 
 ```console
-foo@bar:~$ kubectl apply -f kubemanifest.yaml
+foo@bar:~$ kubectl apply -f kubemanifest.yml
 ```
 
 To find out which cluster kubectl is connected to run the following command
@@ -238,6 +276,101 @@ In my case it showed the following list, as I had docker desktop installed, so I
 ```console
 foo@bar:~$ kubectl config use-context minikube
 ```
+
+To verify if the nginx ingress controller is running along with the default backend service:
+
+```console
+foo@bar:~$ kubectl get pods -n kube-system
+````
+
+In case they don't show up fix it this way:
+
+```console
+foo@bar:~$ kubectl apply -f https://raw.githubusercontent.com/roelal/minikube/5093d8b21c0931a6c63fa448538761b4bf100ee0/deploy/addons/ingress/ingress-rc.yaml
+foo@bar:~$ kubectl apply -f https://raw.githubusercontent.com/roelal/minikube/5093d8b21c0931a6c63fa448538761b4bf100ee0/deploy/addons/ingress/ingress-svc.yaml
+```
+
+To know the host and ip of the ingress run:
+
+```console
+foo@bar:~$ kubectl get ingress
+```
+
+If you wish to ssh into a pod run:
+
+```console
+foo@bar:~$ kubectl exec -it SERVICE_NAME -c CONTAINER_NAME -- /bin/bash
+```
+
+In case I mess something up, this is reminder of how to start back over quickly
+
+```console
+foo@bar:~$ minikube delete && minikube start 
+```
+
+## :thinking: Troubleshooting k8's
+
+Once I set everything up I started getting a 502 Bad Gateway Error when accessing the Ingress domain. So I'll 
+leave here in this section anything that works for getting further insight of what's happening.
+
+Surfing the web I found an interesting article on medium about how to troubleshoot this issue, check out here:
+
+```console
+https://cameron-manavian.medium.com/how-to-debug-a-502-on-kubernetes-c2b0bc1f7490
+```
+
+First off we need to make sure that our pods are running by entering the following command on the cli:
+
+```console
+foo@bar:~$ kubectl get pods
+```
+
+Now you must check if your pod's ports are open and listening by running:
+
+```console
+foo@bar:~$ kubectl describe pod express-6d89b9fdf8-7f28w
+```
+
+Next, we should verify that the service is active:
+
+```console
+foo@bar:~$ kubectl get svc
+```
+
+Is your service healthy and mapped correctly?
+Using each service name, you can retrieve more details on the current state of the service by once again using kubectl describe. You will usually only need to do this on the service that is associated with the problem pod and ingress URL.
+
+```console
+foo@bar:~$ kubectl describe svc express
+```
+
+Now check whether the TargetPort and Endpoints port match, afterwards lets make sure that everything is fine with our ingress:
+
+```console
+foo@bar:~$ kubectl get ing
+````
+
+Lets find out if our ingress is configured correctly
+
+```console
+foo@bar:~$ kubectl describe ing entrance
+````
+
+Take notice of the following:
+
+- Your backends ip and port match with the endpoints you saw earlier.
+
+Inspecting the output of the command above I came across with something odd:
+
+```console
+Events:
+  Type    Reason  Age                From                      Message
+  ----    ------  ----               ----                      -------
+  Normal  Sync    44m (x2 over 45m)  nginx-ingress-controller  Scheduled for sync
+```
+
+Yes, my nginx ingress controller is scheduled for sync ? wtf ?
+It may be cause by different ingresses using same host name. Maybe there is a duplicate ingress resource defined in other namespace.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
