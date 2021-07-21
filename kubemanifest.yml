@@ -173,12 +173,12 @@ items:
         io.kompose.service: seed
       name: seed
     spec:
-      replicas: 1
+      replicas: 1 #changed replicas from 1 to 0
       selector:
         matchLabels:
           io.kompose.service: seed
       strategy:
-        type: Recreate
+        type: Recreate #RollingUpdate
       template:
         metadata:
           annotations:
@@ -232,8 +232,9 @@ items:
     metadata:
       name: entrance
       annotations:
+        # kubernetes.io/ingress.class: "ingress-nginx-controller"
         nginx.ingress.kubernetes.io/rewrite-target: /$1
-        nginx.ingress.kubernetes.io/use-proxy-protocol: "false"
+        # nginx.ingress.kubernetes.io/use-proxy-protocol: "false"
     spec:
       rules:
         - host: dragonball.zeta

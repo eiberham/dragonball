@@ -212,16 +212,18 @@ Install minikube
 foo@bar:~$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
 foo@bar:~$ sudo install minikube-darwin-amd64 /usr/local/bin/minikube
 ```
-Start your cluster
+Start your cluster of three nodes
 
 ```console
 foo@bar:~$ minikube start --nodes 3 -p dragonball
 ```
 
-Or if you wish to start it from a virtual machine like virtual box instead
+Or if you wish to start it from a virtual machine like virtual box instead. The following command will
+create a 3 nodes cluster, 3 machines. It will configure kubectl to use minikube cluster and "default" 
+namespace.
 
 ```console
-foo@bar:~$ minikube start --vm=true --vm-driver=virtualbox
+foo@bar:~$ minikube start --vm=true --vm-driver=virtualbox --nodes 3
 ```
 
 To access your virtual machine from minikube simply run 
@@ -277,6 +279,12 @@ In my case it showed the following list, as I had docker desktop installed, so I
 foo@bar:~$ kubectl config use-context minikube
 ```
 
+To port forward my express service and make it accessible outside the cluster:
+
+```console
+foo@bar:~$ kubectl port-forward --address 0.0.0.0 service/express 7080:3000
+```
+
 To verify if the nginx ingress controller is running along with the default backend service:
 
 ```console
@@ -296,13 +304,69 @@ To know the host and ip of the ingress run:
 foo@bar:~$ kubectl get ingress
 ```
 
+To check your ingress controller service:
+
+```console
+foo@bar:~$ kubectl get svc -A | grep ingress
+```
+
+The output given for the above command is something like this:
+
+```console
+ingress-nginx   ingress-nginx-controller             NodePort    10.101.133.217   <none>        80:31761/TCP,443:31588/TCP   3d
+ingress-nginx   ingress-nginx-controller-admission   ClusterIP   10.110.165.180   <none>        443/TCP                      3d
+```
+
+To get info about my PV(Persistent Volume):
+
+```console
+kubectl get pv
+````
+
+Notice how the status is set to "Bound"
+
+To get info about the PVC(Persistent Volume Claim):
+
+```console
+ foo@bar:~$ kubectl get pvc
+```
+
+Make sure in the command above that the output shows that the PersistentVolumeClaim is bound to your PersistentVolume.
+
+To get the Storage Class:
+
+```console
+foo@bar:~$ kubectl get sc
+```
+
 If you wish to ssh into a pod run:
 
 ```console
 foo@bar:~$ kubectl exec -it SERVICE_NAME -c CONTAINER_NAME -- /bin/bash
 ```
 
-In case I mess something up, this is reminder of how to start back over quickly
+To check logs of all pods you can run:
+
+```console
+foo@bar:~$ kubectl cluster-info dump
+```
+
+To check logs of a particular pod:
+
+```console
+foo@bar:~$ kubectl logs POD_NAME
+```
+
+To curl inside a pod execute the following command:
+
+```console
+foo@bar:~$ kubectl exec -it POD_NAME -- curl -k https://localhost:3000/
+```
+
+In my case I wanted to test the api server's pod so, as it's running through https I had to specify the -k argument to curl 
+in order to turn off the verification of the ssl certificate.
+
+In case I mess something up, this is a reminder of how to start back over quickly
 
 ```console
 foo@bar:~$ minikube delete && minikube start 
