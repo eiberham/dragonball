@@ -140,7 +140,7 @@ Finally run compose:
 foo@bar:~$ docker-compose up
 ```
 
-## :anchor: DockerHub
+## :anchor: Docker & DockerHub
 
 If you wish to push the docker image to your docker hub account simply build the image and push it e.g:
 
@@ -148,6 +148,17 @@ If you wish to push the docker image to your docker hub account simply build the
  foo@bar:~$ docker build -t username/dragonball:tag .
  foo@bar:~$ docker login
  foo@bar:~$ docker push username/dragonball:tag
+```
+
+To limit resource usage when running a container :
+
+```console
+foo@bar:~$ docker run -d --name dragonball \
+           --publish 8080:8080
+           --memory 200m \
+           --memory-swap 1G \
+           --cpu-shares 1024 \
+           username/dragonball:tag
 ```
 
 ## :airplane: Deploy
@@ -203,7 +214,9 @@ Done!
 
 ## :ship: Kubernetes
 
-Alternatively if you want to run it in a kubernetes cluster in your host machine do the following 
+This is a guideline for myself for running this api in a kubernetes cluster :stuck_out_tongue:
+
+So alternatively, if you want to run it in a kubernetes cluster in your host machine do the following 
 (tested on mac os with docker desktop):
 
 Install minikube
@@ -239,12 +252,10 @@ foo@bar:~$ minikube addons list
 foo@bar:~$ minikube addons enable ingress
 ```
 
-To delete service, deployment and ingress:
+To delete a resource object:
 
 ```console
-foo@bar:~$ kubectl delete deployment web-deployment
-foo@bar:~$ kubectl delete service web-service
-foo@bar:~$ kubectl delete ingress web-ingress
+foo@bar:~$ kubectl delete <resource-name> <obj-name>
 ```
 
 Install kompose
@@ -260,6 +271,12 @@ Convert the docker-compose.yml file into a manifest file that can be used by kub
 ```console
 foo@bar:~$ kompose convert -f docker-compose.yml -o kubemanifest.yml
 ```
+
+The manifest generated will have all the workload resources needed in order to setup a kubernetes cluster. Keep in mind
+that further adjustments to the manifest are commonly needed to make it work. 
+Remember that a deployment resource is a pods template.
+Remember that is a type is not specified for a service it takes clusterip by default.
+Remember that an ingress resource allows us to create access to our services based on a path.
 
 Run the kubectl apply -f command over the generated manifest file.
 
@@ -278,6 +295,46 @@ In my case it showed the following list, as I had docker desktop installed, so I
 ```console
 foo@bar:~$ kubectl config use-context minikube
 ```
+
+To check your cluster nodes, aka machines that take part in your cluster run:
+
+```console
+foo@bar:~$ kubectl get nodes
+```
+
+To get pods, nodes, deployments and services all at once just run:
+
+```console
+foo@bar:~$ kubectl get all
+```
+
+To check the ip of all pods:
+
+```console
+foo@bar:~$ kubectl get pods -o wide
+```
+
+To check the public ip of our nodes:
+
+```console
+foo@bar:~$ kubectl get nodes -o wide
+```
+
+To scale up a specific deployment, lets say we want to scale it to five pods:
+
+```console
+foo@bar:~$ kubectl scale --replicas=5 deployment/hello
+```
+
+### Dashboard
+
+To take a look at a web-based kubernetes user interface on minikube use the following command:
+
+```console
+foo@bar:~$ minikube dashboard --url
+```
+
+Open up your favorite web browser and go on the given url.
 
 To port forward my express service and make it accessible outside the cluster:
 
@@ -310,17 +367,10 @@ To check your ingress controller service:
 foo@bar:~$ kubectl get svc -A | grep ingress
 ```
 
-The output given for the above command is something like this:
-
-```console
-ingress-nginx   ingress-nginx-controller             NodePort    10.101.133.217   <none>        80:31761/TCP,443:31588/TCP   3d
-ingress-nginx   ingress-nginx-controller-admission   ClusterIP   10.110.165.180   <none>        443/TCP                      3d
-```
-
 To get info about my PV(Persistent Volume):
 
 ```console
-kubectl get pv
+foo@bar:~$ kubectl get pv
 ````
 
 Notice how the status is set to "Bound"
@@ -357,10 +407,22 @@ To check logs of a particular pod:
 foo@bar:~$ kubectl logs POD_NAME
 ```
 
+To continously stream the logs back to terminal without exiting, add the -f (follow) command flag:
+
+```console
+foo@bar:~$ kubectl logs POD_NAME -f
+```
+
 To curl inside a pod execute the following command:
 
 ```console
 foo@bar:~$ kubectl exec -it POD_NAME -- curl -k https://localhost:3000/
+```
+
+To get a service's endpoints just run:
+
+```console
+foo@bar:~$ kubectl get endpoints <service-name>
 ```
 
 In my case I wanted to test the api server's pod so, as it's running through https I had to specify the -k argument to curl 
@@ -392,7 +454,7 @@ foo@bar:~$ kubectl get pods
 Now you must check if your pod's ports are open and listening by running:
 
 ```console
-foo@bar:~$ kubectl describe pod express-6d89b9fdf8-7f28w
+foo@bar:~$ kubectl describe pod <pod-name>
 ```
 
 Next, we should verify that the service is active:
@@ -401,7 +463,7 @@ Next, we should verify that the service is active:
 foo@bar:~$ kubectl get svc
 ```
 
-Is your service healthy and mapped correctly?
+> Is your service healthy and mapped correctly?
 Using each service name, you can retrieve more details on the current state of the service by once again using kubectl describe. You will usually only need to do this on the service that is associated with the problem pod and ingress URL.
 
 ```console
@@ -424,17 +486,35 @@ Take notice of the following:
 
 - Your backends ip and port match with the endpoints you saw earlier.
 
-Inspecting the output of the command above I came across with something odd:
+installing nslookup in debian
 
 ```console
-Events:
-  Type    Reason  Age                From                      Message
-  ----    ------  ----               ----                      -------
-  Normal  Sync    44m (x2 over 45m)  nginx-ingress-controller  Scheduled for sync
+foo@bar:~$ apt install dnsutils
+````
+
+As my service type is LoadBalancer I had to enable it in minikube by running in a separate tab:
+
+```console
+foo@bar:~$ minikube tunnel
 ```
 
-Yes, my nginx ingress controller is scheduled for sync ? wtf ?
-It may be cause by different ingresses using same host name. Maybe there is a duplicate ingress resource defined in other namespace.
+This will provide the load balancing needed. Then I had to get the URL to connect to my service by running:
+
+```console
+foo@bar:~$ minikube service express --https
+```
+
+Now I can curl into my service from the host machine with a successful response:
+
+```console
+foo@bar:~$ https://dragonball.zeta:32162/
+```
+
+Interesting resources:
+
+- https://minikube.sigs.k8s.io/docs/handbook/host-access/
+- https://minikube.sigs.k8s.io/docs/commands/service/
+- https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

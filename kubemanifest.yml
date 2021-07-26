@@ -30,7 +30,7 @@ items:
         io.kompose.service: express
       name: express
     spec:
-      type: NodePort #LoadBalancer
+      type: LoadBalancer
       ports:
         - name: "3000"
           # port accessible inside cluster (the exposed port)
@@ -39,6 +39,7 @@ items:
           targetPort: 3000
       selector:
         io.kompose.service: express
+        role: express
     status:
       loadBalancer: {}
   - apiVersion: v1
@@ -61,7 +62,7 @@ items:
     status:
       loadBalancer: {}
   - apiVersion: apps/v1
-    kind: Deployment
+    kind: StatefulSet
     metadata:
       annotations:
         kompose.cmd: kompose convert -f docker-compose.yml -o kubemanifest.yml
@@ -71,11 +72,11 @@ items:
         io.kompose.service: db
       name: db
     spec:
-      replicas: 1
       selector:
         matchLabels:
           io.kompose.service: db
-      strategy: {}
+      serviceName: db
+      replicas: 1
       template:
         metadata:
           annotations:
@@ -92,7 +93,7 @@ items:
                 - containerPort: 27017
               resources: {}
           restartPolicy: Always
-    status: {}
+    #status: {}
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -117,6 +118,7 @@ items:
           creationTimestamp: null
           labels:
             io.kompose.service: express
+            role: express
           
         spec:
           containers:
@@ -173,12 +175,12 @@ items:
         io.kompose.service: seed
       name: seed
     spec:
-      replicas: 1 #changed replicas from 1 to 0
+      replicas: 1
       selector:
         matchLabels:
           io.kompose.service: seed
       strategy:
-        type: Recreate #RollingUpdate
+        type: Recreate
       template:
         metadata:
           annotations:
@@ -232,9 +234,7 @@ items:
     metadata:
       name: entrance
       annotations:
-        # kubernetes.io/ingress.class: "ingress-nginx-controller"
         nginx.ingress.kubernetes.io/rewrite-target: /$1
-        # nginx.ingress.kubernetes.io/use-proxy-protocol: "false"
     spec:
       rules:
         - host: dragonball.zeta
