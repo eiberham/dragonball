@@ -119,7 +119,7 @@ items:
           labels:
             io.kompose.service: express
             role: express
-          
+
         spec:
           containers:
             - image: acedeno/dragonball:v1
@@ -129,6 +129,24 @@ items:
               resources: {}
               # so that the image gets pulled from the docker registry all the time.
               imagePullPolicy: Always
+              livenessProbe:
+                httpGet:
+                  path: /
+                  port: 443
+                  scheme: HTTPS
+              # readiness check
+              # pods will be checked for readiness via http get to / on port 3000
+              # if 3 checks fails the pod is considered not ready
+              # if 1 check succeeds the pod will be considered ready
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: 443
+                  scheme: HTTPS
+                periodSeconds: 2
+                initialDelaySeconds: 0
+                failureThreshold: 3
+                successThreshold: 1
           restartPolicy: Always
     status: {}
   - apiVersion: apps/v1

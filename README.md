@@ -1,7 +1,7 @@
 # Dragonball
 
 <p align="center">
-  <img src="./dragonball.jpeg" alt="dragonball" />  
+  <img src="./dragonball.jpeg" alt="dragonball" />
 </p>
 
 <table border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: none;">
@@ -88,7 +88,7 @@ This is the list of endpoints currently available:
 There's a OAPI resource to test all the endpoints, you have to log yourself in in order to test those endpoints who are protected. This is how the swagger page looks like:
 
 <p align="center">
-  <img src="./swagger.png" alt="swagger" />  
+  <img src="./swagger.png" alt="swagger" />
 </p>
 
 ## :rocket: How to run it ?
@@ -126,12 +126,12 @@ foo@bar:~$ sudo apt install gnupg2 pass
 ...Or if you face an error like this
 
 ```console
-ERROR: for db Cannot start service db: driver failed programming external connectivity on endpoint 
+ERROR: for db Cannot start service db: driver failed programming external connectivity on endpoint
 ```
 Just run
 
  ```console
-foo@bar:~$ service mongodb stop 
+foo@bar:~$ service mongodb stop
  ```
 
 Finally run compose:
@@ -216,7 +216,7 @@ Done!
 
 This is a guideline for myself for running this api in a kubernetes cluster :stuck_out_tongue:
 
-So alternatively, if you want to run it in a kubernetes cluster in your host machine do the following 
+So alternatively, if you want to run it in a kubernetes cluster in your host machine do the following
 (tested on mac os with docker desktop):
 
 Install minikube
@@ -232,14 +232,14 @@ foo@bar:~$ minikube start --nodes 3 -p dragonball
 ```
 
 Or if you wish to start it from a virtual machine like virtual box instead. The following command will
-create a 3 nodes cluster, 3 machines. It will configure kubectl to use minikube cluster and "default" 
+create a 3 nodes cluster, 3 machines. It will configure kubectl to use minikube cluster and "default"
 namespace.
 
 ```console
 foo@bar:~$ minikube start --vm=true --vm-driver=virtualbox --nodes 3
 ```
 
-To access your virtual machine from minikube simply run 
+To access your virtual machine from minikube simply run
 
 ```console
 foo@bar:~$ minikube ssh
@@ -273,7 +273,7 @@ foo@bar:~$ kompose convert -f docker-compose.yml -o kubemanifest.yml
 ```
 
 The manifest generated will have all the workload resources needed in order to setup a kubernetes cluster. Keep in mind
-that further adjustments to the manifest are commonly needed to make it work. 
+that further adjustments to the manifest are commonly needed to make it work.
 Remember that a deployment resource is a pods template.
 Remember that is a type is not specified for a service it takes clusterip by default.
 Remember that an ingress resource allows us to create access to our services based on a path.
@@ -306,6 +306,12 @@ To get pods, nodes, deployments and services all at once just run:
 
 ```console
 foo@bar:~$ kubectl get all
+```
+
+To delete all pods:
+
+```console
+foo@bar:~$ kubectl delete pod --all
 ```
 
 To check the ip of all pods:
@@ -425,18 +431,18 @@ To get a service's endpoints just run:
 foo@bar:~$ kubectl get endpoints <service-name>
 ```
 
-In my case I wanted to test the api server's pod so, as it's running through https I had to specify the -k argument to curl 
+In my case I wanted to test the api server's pod so, as it's running through https I had to specify the -k argument to curl
 in order to turn off the verification of the ssl certificate.
 
 In case I mess something up, this is a reminder of how to start back over quickly
 
 ```console
-foo@bar:~$ minikube delete && minikube start 
+foo@bar:~$ minikube delete && minikube start
 ```
 
 ## :thinking: Troubleshooting k8's
 
-Once I set everything up I started getting a 502 Bad Gateway Error when accessing the Ingress domain. So I'll 
+Once I set everything up I started getting a 502 Bad Gateway Error when accessing the Ingress domain. So I'll
 leave here in this section anything that works for getting further insight of what's happening.
 
 Surfing the web I found an interesting article on medium about how to troubleshoot this issue, check out here:
