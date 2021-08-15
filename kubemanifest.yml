@@ -132,7 +132,7 @@ items:
               livenessProbe:
                 httpGet:
                   path: /
-                  port: 443
+                  port: 3000
                   scheme: HTTPS
               # readiness check
               # pods will be checked for readiness via http get to / on port 3000
@@ -141,10 +141,10 @@ items:
               readinessProbe:
                 httpGet:
                   path: /
-                  port: 443
+                  port: 3000
                   scheme: HTTPS
-                periodSeconds: 2
-                initialDelaySeconds: 0
+                periodSeconds: 30 # specifies that the kubelet should perform a liveness probe every 30 seconds
+                initialDelaySeconds: 30 # tells the kubelet that it should wait 30 seconds before performing the first probe
                 failureThreshold: 3
                 successThreshold: 1
           restartPolicy: Always
@@ -234,6 +234,17 @@ items:
                 claimName: seed-claim0
     status: {}
   - apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: seed-v0
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      capacity:
+        storage: 600Mi
+      hostPath:
+        path: /data/
+  - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
       creationTimestamp: null
@@ -241,11 +252,13 @@ items:
         io.kompose.service: seed-claim0
       name: seed-claim0
     spec:
+      # storageClassName: manual
+      volumeMode: Filesystem
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 100Mi
+          storage: 500Mi
     status: {}
   - apiVersion: networking.k8s.io/v1
     kind: Ingress
