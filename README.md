@@ -236,7 +236,7 @@ create a 3 nodes cluster, 3 machines. It will configure kubectl to use minikube 
 namespace.
 
 ```console
-foo@bar:~$ minikube start --vm=true --vm-driver=virtualbox --nodes 3
+foo@bar:~$ minikube start --vm=true --vm-driver=virtualbox --nodes 3 --memory 5120 --cpus=4
 ```
 
 To access your virtual machine from minikube simply run

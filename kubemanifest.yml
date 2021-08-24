@@ -134,7 +134,12 @@ items:
                   path: /
                   port: 3000
                   scheme: HTTPS
+                periodSeconds: 350 # specifies that the kubelet should perform a liveness probe every 30 seconds
+                initialDelaySeconds: 120 # tells the kubelet that it should wait 30 seconds before performing the first probe
+                failureThreshold: 3
+                successThreshold: 1
               # readiness check
+              # kubelet uses readiness probes to know when a container is ready to start accepting traffic
               # pods will be checked for readiness via http get to / on port 3000
               # if 3 checks fails the pod is considered not ready
               # if 1 check succeeds the pod will be considered ready
@@ -227,6 +232,15 @@ items:
                 - mountPath: /data
                   name: seed-claim0
               workingDir: /data
+              # readiness check
+              # kubelet uses readiness probes to know when a container is ready to start accepting traffic
+              readinessProbe:
+                exec:
+                  command:
+                  - cat
+                  - /data
+                initialDelaySeconds: 20
+                periodSeconds: 20
           restartPolicy: Always
           volumes:
             - name: seed-claim0
