@@ -395,6 +395,12 @@ To get the Storage Class:
 foo@bar:~$ kubectl get sc
 ```
 
+Or same thing:
+
+```console
+foo@bar:~$ kubectl get storageclass
+```
+
 If you wish to ssh into a pod run:
 
 ```console

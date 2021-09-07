@@ -202,8 +202,8 @@ items:
       selector:
         matchLabels:
           io.kompose.service: seed
-      strategy:
-        type: Recreate
+      #strategy:
+      #  type: Recreate
       template:
         metadata:
           annotations:
@@ -229,8 +229,8 @@ items:
               name: seed
               resources: {}
               volumeMounts:
-                - mountPath: /data/algo #/data
-                  name: seed-v0 # seed-claim take the volume declared below with the name of seed-claim0 and mount it in /data/algo
+                - mountPath: /data #/data
+                  name: seed-claim0 # seed-claim take the volume declared below with the name of seed-claim0 and mount it in /data/algo
               workingDir: /data
               # readiness check
               # kubelet uses readiness probes to know when a container is ready to start accepting traffic
@@ -243,9 +243,9 @@ items:
                 periodSeconds: 20
           restartPolicy: Always
           volumes:
-            - name: seed-v0 # seed-claim0  the volume to be mounted
-              #persistentVolumeClaim:
-                #claimName: seed-claim0
+            - name: seed-claim0 # seed-claim0  the volume to be mounted
+              persistentVolumeClaim:
+                claimName: seed-claim0
     status: {}
     #
     # PERSISTENT VOLUMES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -257,12 +257,17 @@ items:
     metadata:
       name: seed-v0
     spec:
+      #storageClassName: standard
+      volumeMode: Filesystem
       accessModes:
         - ReadWriteOnce
+      claimRef:
+        name: seed-claim0
       capacity:
         storage: 600Mi
       hostPath:
-        path: /data/algo/
+        path: /data
+  # Persistent volume claim definition was here
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
@@ -277,7 +282,7 @@ items:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 500Mi
+          storage: 600Mi
     status: {}
   - apiVersion: networking.k8s.io/v1
     kind: Ingress

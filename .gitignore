@@ -92,3 +92,5 @@ typings/
 
 # aws key pair
 dragonball.pem
+
+.DS_Store
