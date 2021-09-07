@@ -5,11 +5,18 @@ on:
       - master
 jobs:
   build:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Install
-        run: |
-          docker compose up
+      - name: Start containers
+        run: docker-compose -f "docker-compose.yml" up -d --build
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose.yml" down
