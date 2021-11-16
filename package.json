@@ -27,7 +27,7 @@
   "author": "Abraham Cedeno",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.551.0",
+    "aws-sdk": "^2.814.0",
     "bcrypt": "^3.0.6",
     "chalk": "^2.4.2",
     "dotenv": "^8.1.0",
