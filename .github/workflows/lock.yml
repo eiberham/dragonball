@@ -1,0 +1,20 @@
+# Lock master branch on tuesdays from 2pm est to 6pm est
+name: Lock master branch on tuesdays
+
+on:
+  schedule:
+    - cron: '0 18 * * 2'
+
+jobs:
+  lock-development-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Lock master branch
+        run: |
+          git checkout master
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git update-ref refs/heads/master -m "Locking branch" $(date +%s)
+          git push origin master
