@@ -219,314 +219,232 @@ This is a guideline for myself for running this api in a kubernetes cluster :stu
 So alternatively, if you want to run it in a kubernetes cluster in your host machine do the following
 (tested on mac os with docker desktop):
 
-Install minikube
+If you take a look at the source code you'll see that the application uses mongodb by means of persistent storage and redis as a cache or volatile storage, normally third party services like these live in their own pods, so we're going to start defining the most relevant one first and then we'll follow up with the rest.
 
-```console
-foo@bar:~$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
-foo@bar:~$ sudo install minikube-darwin-amd64 /usr/local/bin/minikube
-```
-Start your cluster of three nodes
+From the docs
 
-```console
-foo@bar:~$ minikube start --nodes 3 -p dragonball
-```
+> minikube quickly sets up a local Kubernetes cluster on macOS, Linux, and Windows. We proudly focus on helping application developers and new Kubernetes users.
 
-Or if you wish to start it from a virtual machine like virtual box instead. The following command will
-create a 3 nodes cluster, 3 machines. It will configure kubectl to use minikube cluster and "default"
-namespace.
+From the docs
 
-```console
-foo@bar:~$ minikube start --vm=true --vm-driver=virtualbox --nodes 3 --memory 5120 --cpus=4
-```
+> Helm helps you manage Kubernetes applications — Helm Charts help you define, install, and upgrade even the most complex Kubernetes application. Charts are easy to create, version, share, and publish — so start using Helm and stop the copy-and-paste.
 
-To access your virtual machine from minikube simply run
+Before anything make sure you have installed  minikube and helm in your machine and proceed to create a kubernetes cluster:
 
-```console
-foo@bar:~$ minikube ssh
+```bash
+brew update 
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+sudo install minikube-darwin-amd64 /usr/local/bin/minikube
+brew install helm
+minikube start --vm=true
 ```
 
-To list and enable minikube addons (e.g. ingress addon):
+### Express
 
-```console
-foo@bar:~$ minikube addons list
-foo@bar:~$ minikube addons enable ingress
+First off we need to conteinerize the application by building a docker image, on the root folder you'll find a dockerfile. Later on, when creating the deployment objects we will need it.
+
+**dockerfile**
+
+```bash
+FROM node:10.16.0
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install --only=prod
+COPY . .
+RUN npm install -g nodemon
+EXPOSE 3000
+CMD npm run dev
 ```
 
-To delete a resource object:
+In order to build the image get into the application's root directory, run this command, log into your dockerhub account and push the image
 
-```console
-foo@bar:~$ kubectl delete <resource-name> <obj-name>
+```bash
+cd dragonball
+docker build -t eiberham/dragonball:v1 .
+docker login
+docker push eiberham/dragonball:v1
 ```
 
-Install kompose
+Once completed we have to define our express deployment and service objects. For the service we have to define its type as load balancer so that it can redirect traffic to the right pod based on network load.
 
-```console
-foo@bar:~$ curl -L https://github.com/kubernetes/kompose/releases/download/v1.22.0/kompose-darwin-amd64 -o kompose
-foo@bar:~$ chmod +x kompose
-foo@bar:~$ sudo mv ./kompose /usr/local/bin/kompose
+**express.yml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: express
+spec:
+  selector:
+    app: express
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: express
+  template:
+    metadata:
+      labels:
+        app: express
+    spec:
+      containers:
+        - image: eiberham/dragonball:v1
+          name: dragonball
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
 ```
 
-Convert the docker-compose.yml file into a manifest file that can be used by kubectl..
+Ultimately, as we have a service of **type:LoadBalancer** we'd need to expose the service by using ingress, but before let us enable the ingress add-on in minikube :
 
-```console
-foo@bar:~$ kompose convert -f docker-compose.yml -o kubemanifest.yml
+```bash
+minikube addons enable ingress
 ```
 
-The manifest generated will have all the workload resources needed in order to setup a kubernetes cluster. Keep in mind
-that further adjustments to the manifest are commonly needed to make it work.
-Remember that a deployment resource is a pods template.
-Remember that is a type is not specified for a service it takes clusterip by default.
-Remember that an ingress resource allows us to create access to our services based on a path.
+**ingress.yml**
 
-Run the kubectl apply -f command over the generated manifest file.
-
-```console
-foo@bar:~$ kubectl apply -f kubemanifest.yml
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: entrance
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: express
+                port:
+                  number: 3000
 ```
 
-To find out which cluster kubectl is connected to run the following command
+### Mongo 
 
-```console
-foo@bar:~$ kubectl config get-contexts
+The mongo instance will have authentication enabled so we'll need to provide username and password. Let us create the secrets.yml file that is going to hold our credentials:
+
+**secrets.yml**
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-secret
+type: Opaque
+stringData:
+  USERNAME: eiberham
+  PASSWORD: eiberham
 ```
 
-In my case it showed the following list, as I had docker desktop installed, so I had to switch to minikube
+Since the idea is to  we create the bash script that will prepopulate the database, we're going to create a seeding bash script. For now, the most important thing to have is a user who can authenticate and issue requests to protected routes:
 
-```console
-foo@bar:~$ kubectl config use-context minikube
+**seeding.sh**
+
+```bash
+mongosh "mongodb://127.0.0.1:27017/dragonball" --username $USERNAME -p $PASSWORD --authenticationDatabase dragonball <<EOF
+db.users.insertOne({
+    "username" : "admin",
+    "password" : "$2b$10$al8KvO3PCchoB/nmwU6XZ.HjpmGRSw48SS8U8P0IjRuQlfkJKISUK",
+    "name" : "Admin",
+    "profile" : 2.0
+})
+db.characters.insertOne({
+    name: "Goku",
+    description: "Goku is the main protagonist of the dragon ball series",
+    avatar: "https://someimageurl.com"
+})
+EOF
 ```
 
-To check your cluster nodes, aka machines that take part in your cluster run:
+In the code above we have defined an insert for the users collection using **admin** as username and password as well as an insert for the characters collection.
 
-```console
-foo@bar:~$ kubectl get nodes
+```bash
+kubectl create configmap seeding-configmap --from-file=seeding.sh
 ```
 
-To get pods, nodes, deployments and services all at once just run:
+In order to create the deployment/service for the mongo database we will use helm, but beforehand we have to seed the database. 
 
-```console
-foo@bar:~$ kubectl get all
+**values.yml**
+
+```yaml
+mongodb:
+  auth:
+    usernames:
+      - eiberham
+    passwords:
+      - eiberham
+    databases:
+      - dragonball
+  initdbScripts:
+    enabled: true
+    configMapName: seeding-configmap
+  extraEnvVars:
+  - name: USERNAME
+    valueFrom:
+      secretkeyRef:
+        name: mongo-secret
+        key: username
+  - name: PASSWORD
+    valueFrom:
+      secretkeyRef:
+        name: mongo-secret
+        key: password
 ```
 
-To delete all pods:
+Now it's time to install the mongo chart. If you wish to look
 
-```console
-foo@bar:~$ kubectl delete pod --all
+```bash
+noglob helm install mongo oci://registry-1.docker.io/bitnamicharts/mongodb \
+--set auth.usernames[0]=${kubectl get secret mongo-secret -o jsonpath='{.data.USERNAME}'} \
+--set auth.passwords[0]=${kubectl get secret mongo-secret -o jsonpath='{.data.PASSWORD}'} \
+--set auth.databases[0]=dragonball \
+--set initdbScriptsConfigMap=seeding-configmap \
+--set extraEnvVarsSecret=mongo-secret \
+--values values.yml --debug
 ```
 
-To check the ip of all pods:
+You can either check the pod logs to make sure there was no error or log into the pod and query any seeded collection. Plus the seeding script should be located at inside the pod.
 
-```console
-foo@bar:~$ kubectl get pods -o wide
+```bash
+kubectl logs <<pod>>
+kubectl exec it <<pod>> /bin/bash
+mongosh "mongodb://127.0.0.1:27017/dragonball" --username eiberham -p eiberham --authenticationDatabase dragonball
+db.characters.find()
 ```
 
-To check the public ip of our nodes:
+### Redis
 
-```console
-foo@bar:~$ kubectl get nodes -o wide
+Finally we need a redis instance, so we will install a helm chart with authentication disabled and just one replica:
+
+```bash
+noglob helm install redis oci://registry-1.docker.io/bitnamicharts/redis \
+--set auth.enabled=false \
+--set replica.replicaCount=1
 ```
 
-To scale up a specific deployment, lets say we want to scale it to five pods:
+By having every piece of the puzzle in place proceed to issue the following command to get the express url:
 
-```console
-foo@bar:~$ kubectl scale --replicas=5 deployment/hello
+```bash
+minikube service express --url
 ```
 
-### Dashboard
+That should give us the express service's url.
 
-To take a look at a web-based kubernetes user interface on minikube use the following command:
-
-```console
-foo@bar:~$ minikube dashboard --url
-```
-
-Open up your favorite web browser and go on the given url.
-
-To port forward my express service and make it accessible outside the cluster:
-
-```console
-foo@bar:~$ kubectl port-forward --address 0.0.0.0 service/express 7080:3000
-```
-
-To verify if the nginx ingress controller is running along with the default backend service:
-
-```console
-foo@bar:~$ kubectl get pods -n kube-system
-````
-
-In case they don't show up fix it this way:
-
-```console
-foo@bar:~$ kubectl apply -f https://raw.githubusercontent.com/roelal/minikube/5093d8b21c0931a6c63fa448538761b4bf100ee0/deploy/addons/ingress/ingress-rc.yaml
-foo@bar:~$ kubectl apply -f https://raw.githubusercontent.com/roelal/minikube/5093d8b21c0931a6c63fa448538761b4bf100ee0/deploy/addons/ingress/ingress-svc.yaml
-```
-
-To know the host and ip of the ingress run:
-
-```console
-foo@bar:~$ kubectl get ingress
-```
-
-To check your ingress controller service:
-
-```console
-foo@bar:~$ kubectl get svc -A | grep ingress
-```
-
-To get info about my PV(Persistent Volume):
-
-```console
-foo@bar:~$ kubectl get pv
-````
-
-Notice how the status is set to "Bound"
-
-To get info about the PVC(Persistent Volume Claim):
-
-```console
- foo@bar:~$ kubectl get pvc
-```
-
-Make sure in the command above that the output shows that the PersistentVolumeClaim is bound to your PersistentVolume.
-
-To get the Storage Class:
-
-```console
-foo@bar:~$ kubectl get sc
-```
-
-Or same thing:
-
-```console
-foo@bar:~$ kubectl get storageclass
-```
-
-If you wish to ssh into a pod run:
-
-```console
-foo@bar:~$ kubectl exec -it SERVICE_NAME -c CONTAINER_NAME -- /bin/bash
-```
-
-To check logs of all pods you can run:
-
-```console
-foo@bar:~$ kubectl cluster-info dump
-```
-
-To check logs of a particular pod:
-
-```console
-foo@bar:~$ kubectl logs POD_NAME
-```
-
-To continously stream the logs back to terminal without exiting, add the -f (follow) command flag:
-
-```console
-foo@bar:~$ kubectl logs POD_NAME -f
-```
-
-To curl inside a pod execute the following command:
-
-```console
-foo@bar:~$ kubectl exec -it POD_NAME -- curl -k https://localhost:3000/
-```
-
-To get a service's endpoints just run:
-
-```console
-foo@bar:~$ kubectl get endpoints <service-name>
-```
-
-In my case I wanted to test the api server's pod so, as it's running through https I had to specify the -k argument to curl
-in order to turn off the verification of the ssl certificate.
-
-In case I mess something up, this is a reminder of how to start back over quickly
-
-```console
-foo@bar:~$ minikube delete && minikube start
-```
-
-## :thinking: Troubleshooting k8's
-
-Once I set everything up I started getting a 502 Bad Gateway Error when accessing the Ingress domain. So I'll
-leave here in this section anything that works for getting further insight of what's happening.
-
-Surfing the web I found an interesting article on medium about how to troubleshoot this issue, check out here:
-
-```console
-https://cameron-manavian.medium.com/how-to-debug-a-502-on-kubernetes-c2b0bc1f7490
-```
-
-First off we need to make sure that our pods are running by entering the following command on the cli:
-
-```console
-foo@bar:~$ kubectl get pods
-```
-
-Now you must check if your pod's ports are open and listening by running:
-
-```console
-foo@bar:~$ kubectl describe pod <pod-name>
-```
-
-Next, we should verify that the service is active:
-
-```console
-foo@bar:~$ kubectl get svc
-```
-
-> Is your service healthy and mapped correctly?
-Using each service name, you can retrieve more details on the current state of the service by once again using kubectl describe. You will usually only need to do this on the service that is associated with the problem pod and ingress URL.
-
-```console
-foo@bar:~$ kubectl describe svc express
-```
-
-Now check whether the TargetPort and Endpoints port match, afterwards lets make sure that everything is fine with our ingress:
-
-```console
-foo@bar:~$ kubectl get ing
-````
-
-Lets find out if our ingress is configured correctly
-
-```console
-foo@bar:~$ kubectl describe ing entrance
-````
-
-Take notice of the following:
-
-- Your backends ip and port match with the endpoints you saw earlier.
-
-installing nslookup in debian
-
-```console
-foo@bar:~$ apt install dnsutils
-````
-
-As my service type is LoadBalancer I had to enable it in minikube by running in a separate tab:
-
-```console
-foo@bar:~$ minikube tunnel
-```
-
-This will provide the load balancing needed. Then I had to get the URL to connect to my service by running:
-
-```console
-foo@bar:~$ minikube service express --https
-```
-
-Now I can curl into my service from the host machine with a successful response:
-
-```console
-foo@bar:~$ https://dragonball.zeta:32162/
-```
-
-Interesting resources:
-
-- https://minikube.sigs.k8s.io/docs/handbook/host-access/
-- https://minikube.sigs.k8s.io/docs/commands/service/
-- https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
