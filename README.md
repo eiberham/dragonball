@@ -443,7 +443,11 @@ By having every piece of the puzzle in place proceed to issue the following comm
 minikube service express --url
 ```
 
-That should give us the express service's url.
+That should give us the express service's url and port. Now if you issue a curl to the auth endpoint it should work:
+
+```bash
+curl -X POST https://192.168.64.30:30136/api/auth -k -d '{ "user":"admin", "password":"admin" }' -H 'Content-Type: application/json'
+```
 
 
 ## Contributing
