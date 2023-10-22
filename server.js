@@ -23,7 +23,9 @@ require("dotenv").config();
 mongoose.connect(process.env.DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    user: "eiberham",
+    pass: "eiberham"
 });
 
 require("./models/users");
@@ -35,6 +37,7 @@ const auth = require("./routes/auth");
 const characters = require("./routes/characters");
 const sagas = require("./routes/sagas");
 const films = require("./routes/films");
+const users = require("./routes/users");
 
 const app = express();
 
@@ -98,6 +101,7 @@ app.use("/api/auth", auth);
 app.use("/api/characters", characters);
 app.use("/api/sagas", sagas);
 app.use("/api/films", films);
+app.use("/api/users", users);
 
 https
     .createServer(

@@ -28,7 +28,7 @@ spec:
         app: express
     spec:
       containers:
-        - image: acedeno/dragonball:v1
+        - image: acedeno/dragonball:v2
           name: dragonball
           ports:
             - containerPort: 3000

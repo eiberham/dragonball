@@ -90,7 +90,11 @@ typings/
 # Jetbrains IDE
 .idea/
 
-# aws key pair
+# Aws key pair
 dragonball.pem
 
+# Mac stuff
 .DS_Store
+
+# Any txt file
+*.txt

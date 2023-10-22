@@ -1,8 +1,8 @@
 [
     {
-        "username" : "test",
-        "password" : "$2b$10$FD91tjrkC/Q41.GVOnjvNOjVXBKqXQ.n1iLHeid2t4DOBjz.sTH7m",
-        "name" : "Pepito Tester",
+        "username" : "admin",
+        "password" : "$2b$10$al8KvO3PCchoB/nmwU6XZ.HjpmGRSw48SS8U8P0IjRuQlfkJKISUK",
+        "name" : "Admin",
         "profile" : 2.0
     }
 ]

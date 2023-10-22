@@ -1,0 +1,31 @@
+## @param auth.usernames List of custom users to be created during the initialization
+## @param auth.passwords List of passwords for the custom users set at `auth.usernames`
+## @param auth.databases List of custom databases to be created during the initialization
+##
+
+## kubectl create configmap seeding-configmap --from-file=seeding.sh
+
+## https://stackoverflow.com/questions/46859004/how-to-include-data-with-mongo-image-in-kubernetes
+
+mongodb:
+  auth:
+    usernames:
+      - eiberham
+    passwords:
+      - eiberham
+    databases:
+      - dragonball
+  initdbScripts:
+    enabled: true
+    configMapName: seeding-configmap
+  extraEnvVars:
+  - name: USERNAME
+    valueFrom:
+      secretkeyRef:
+        name: mongo-secret
+        key: username
+  - name: PASSWORD
+    valueFrom:
+      secretkeyRef:
+        name: mongo-secret
+        key: password

@@ -1,5 +1,6 @@
 apiVersion: v1
 items:
+  # db service / allows access to the db pod ?
   - apiVersion: v1
     kind: Service
     metadata:
@@ -19,6 +20,7 @@ items:
         io.kompose.service: db
     status:
       loadBalancer: {}
+  # express service / allows access to the express pod ?
   - apiVersion: v1
     kind: Service
     metadata:
@@ -42,6 +44,7 @@ items:
         role: express
     status:
       loadBalancer: {}
+  # redis service / allows access to the redis pod ?
   - apiVersion: v1
     kind: Service
     metadata:
@@ -61,6 +64,7 @@ items:
         io.kompose.service: redis
     status:
       loadBalancer: {}
+  # what is this for ?
   - apiVersion: apps/v1
     kind: StatefulSet
     metadata:
@@ -94,6 +98,7 @@ items:
               resources: {}
           restartPolicy: Always
     #status: {}
+    # defines the express pod ?
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -154,6 +159,7 @@ items:
                 successThreshold: 1
           restartPolicy: Always
     status: {}
+    # defined the redis pod ?
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -187,6 +193,7 @@ items:
               resources: {}
           restartPolicy: Always
     status: {}
+    # defines the seed pod ?
   - apiVersion: apps/v1
     kind: Deployment
     metadata:

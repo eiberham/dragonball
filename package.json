@@ -44,7 +44,7 @@
     "mongoose": "^5.7.5",
     "nodemailer": "^6.3.1",
     "pm2": "^4.0.0",
-    "redis": "^2.8.0",
+    "redis": "2.8.0",
     "swagger-jsdoc": "^3.4.0",
     "swagger-ui-express": "^4.1.1",
     "winston": "^3.3.3"

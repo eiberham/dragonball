@@ -82,6 +82,18 @@ This is the list of endpoints currently available:
     <tr>
       <td>DELETE</td><td>/films/:id</td><td>Delete a film</td><td>Protected</td>
     </tr>
+    <tr>
+      <td>GET</td><td>/users</td><td>Get a list of users</td><td>Public</td>
+    </tr>
+    <tr>
+      <td>GET</td><td>/users/:name</td><td>Get info about a single user</td><td>Public</td>
+    </tr>
+    <tr>
+      <td>POST</td><td>/users</td><td>Create user</td><td>Protected</td>
+    </tr>
+    <tr>
+      <td>DELETE</td><td>/users/:id</td><td>Delete user</td><td>Protected</td>
+    </tr>
   </tbody>
 </table>
 
@@ -232,7 +244,7 @@ From the docs
 Before anything make sure you have installed  minikube and helm in your machine and proceed to create a kubernetes cluster:
 
 ```bash
-brew update 
+brew update
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
 sudo install minikube-darwin-amd64 /usr/local/bin/minikube
 brew install helm
@@ -305,6 +317,12 @@ spec:
           imagePullPolicy: Always
 ```
 
+Now run:
+
+```bash
+kubectl apply -f express.yml
+```
+
 Ultimately, as we have a service of **type:LoadBalancer** we'd need to expose the service by using ingress, but before let us enable the ingress add-on in minikube :
 
 ```bash
@@ -334,7 +352,13 @@ spec:
                   number: 3000
 ```
 
-### Mongo 
+Now run:
+
+```bash
+kubectl apply -f ingress.yml
+```
+
+### Mongo
 
 The mongo instance will have authentication enabled so we'll need to provide username and password. Let us create the secrets.yml file that is going to hold our credentials:
 
@@ -351,22 +375,28 @@ stringData:
   PASSWORD: eiberham
 ```
 
+Now run:
+```bash
+kubectl apply -f secrets.yml
+``````
+
 Since the idea is to  we create the bash script that will prepopulate the database, we're going to create a seeding bash script. For now, the most important thing to have is a user who can authenticate and issue requests to protected routes:
 
 **seeding.sh**
 
 ```bash
-mongosh "mongodb://127.0.0.1:27017/dragonball" --username $USERNAME -p $PASSWORD --authenticationDatabase dragonball <<EOF
+mongosh "mongodb://127.0.0.1:27017/dragonball" --username $USERNAME -p $PASSWORD --authenticationDatabase dragonball <<'EOF'
 db.users.insertOne({
-    "username" : "admin",
-    "password" : "$2b$10$al8KvO3PCchoB/nmwU6XZ.HjpmGRSw48SS8U8P0IjRuQlfkJKISUK",
-    "name" : "Admin",
-    "profile" : 2.0
+    username : 'admin',
+    password : '$2b$10$al8KvO3PCchoB/nmwU6XZ.HjpmGRSw48SS8U8P0IjRuQlfkJKISUK',
+    name : 'Admin',
+    profile : 2.0
 })
 db.characters.insertOne({
-    name: "Goku",
-    description: "Goku is the main protagonist of the dragon ball series",
-    avatar: "https://someimageurl.com"
+    name: 'Goku',
+    description: 'Goku is the main protagonist of the dragon ball series',
+    avatar:
+        'https://vignette.wikia.nocookie.net/dragonball/images/5/5b/Gokusteppingoutofaspaceship.jpg/revision/latest/scale-to-width-down/224?cb=20150325220848'
 })
 EOF
 ```
@@ -377,7 +407,7 @@ In the code above we have defined an insert for the users collection using **adm
 kubectl create configmap seeding-configmap --from-file=seeding.sh
 ```
 
-In order to create the deployment/service for the mongo database we will use helm, but beforehand we have to seed the database. 
+In order to create the deployment/service for the mongo database we will use helm, but beforehand we have to seed the database.
 
 **values.yml**
 
@@ -410,8 +440,8 @@ Now it's time to install the mongo chart. If you wish to look
 
 ```bash
 noglob helm install mongo oci://registry-1.docker.io/bitnamicharts/mongodb \
---set auth.usernames[0]=${kubectl get secret mongo-secret -o jsonpath='{.data.USERNAME}'} \
---set auth.passwords[0]=${kubectl get secret mongo-secret -o jsonpath='{.data.PASSWORD}'} \
+--set auth.usernames[0]=$(kubectl get secret mongo-secret -o jsonpath='{.data.USERNAME}' | base64 --decode) \
+--set auth.passwords[0]=$(kubectl get secret mongo-secret -o jsonpath='{.data.PASSWORD}' | base64 --decode) \
 --set auth.databases[0]=dragonball \
 --set initdbScriptsConfigMap=seeding-configmap \
 --set extraEnvVarsSecret=mongo-secret \
