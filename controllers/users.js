@@ -13,22 +13,25 @@ module.exports = {
      *
      * @returns {Promise} Promise containing the users list.
      */
-    getAll: async () => {
-        try {
-            const result = await client.get("users");
-            if (result) return JSON.parse(result);
-            return Users.find({}, (err, users) => {
-                if (err) return err;
-                client.setex(
-                    "users",
-                    process.env.REDIS_EXP_TIME,
-                    JSON.stringify(users)
-                );
-                return users;
+    getAll: () => {
+        return new Promise((resolve, reject) => {
+            client.get("users", (err, result) => {
+                if (err) reject(err);
+                if (result) {
+                    resolve(JSON.parse(result));
+                } else {
+                    Users.find({}, (err, users) => {
+                        if (err) reject(err);
+                        client.setex(
+                            "characters",
+                            process.env.REDIS_EXP_TIME,
+                            JSON.stringify(users)
+                        );
+                        resolve(users);
+                    });
+                }
             });
-        } catch (e) {
-            return e;
-        }
+        });
     },
     /**
      * Gets a single user by name.
@@ -36,17 +39,28 @@ module.exports = {
      * @param {string} name the user name.
      * @returns {Promise} Promise containing the single user.
      */
-    get: async name => {
-        try {
-            const result = await client.get(name);
-            if (result) return JSON.parse(result);
-            const user = await Users.findOne({
-                name: { $regex: new RegExp(`^${name}`, "i") }
+    get: name => {
+        return new Promise((resolve, reject) => {
+            client.get(name, (err, result) => {
+                if (err) reject(err);
+                if (result) {
+                    resolve(JSON.parse(result));
+                } else {
+                    Users.findOne(
+                        { name: { $regex: new RegExp(`^${name}`, "i") } },
+                        (err, user) => {
+                            if (err) reject(err);
+                            client.setex(
+                                name,
+                                process.env.REDIS_EXP_TIME,
+                                JSON.stringify(user)
+                            );
+                            resolve(user);
+                        }
+                    );
+                }
             });
-            return user;
-        } catch (e) {
-            return e;
-        }
+        });
     },
     /**
      * Creates a user.
@@ -57,19 +71,26 @@ module.exports = {
      * @param profile
      * @returns {Promise} Promise with message of resource created
      */
-    create: async (username, password, name, profile) => {
-        try {
-            const hashed = await bcrypt.hash(password, 10);
-            await Users.create({
-                username,
-                password: hashed,
-                name,
-                profile
+    create: (username, password, name, profile) => {
+        return new Promise((resolve, reject) => {
+            // eslint-disable-next-line no-shadow
+            bcrypt.hash(password, 10).then(password => {
+                Users.create(
+                    {
+                        username,
+                        password,
+                        name,
+                        profile
+                    },
+                    (err, user) => {
+                        if (err) reject(err);
+                        resolve({
+                            message: "Resource created"
+                        });
+                    }
+                );
             });
-            return { message: "Resource created" };
-        } catch (e) {
-            return e;
-        }
+        });
     },
     /**
      * Updates a user.
@@ -78,17 +99,20 @@ module.exports = {
      * @param {object} body the user model's body.
      * @returns {Promise}
      */
-    update: async (id, body) => {
-        try {
-            await Users.findOneAndUpdate(
+    update: (id, body) => {
+        return new Promise((resolve, reject) => {
+            Users.findOneAndUpdate(
                 { _id: id },
                 { ...body },
-                { upsert: true }
+                { upsert: true },
+                (err, user) => {
+                    if (err) reject(err);
+                    resolve({
+                        message: "Resource updated"
+                    });
+                }
             );
-            return { message: "Resource updated" };
-        } catch (e) {
-            return e;
-        }
+        });
     },
     /**
      * Deletes a user
@@ -96,12 +120,14 @@ module.exports = {
      * @param {number} id the user id.
      * @returns {Promise}
      */
-    delete: async id => {
-        try {
-            await Users.deleteOne({ _id: id });
-            return { message: "Resource deleted" };
-        } catch (e) {
-            return e;
-        }
+    delete: id => {
+        return new Promise((resolve, reject) => {
+            Users.deleteOne({ _id: id }, (err, user) => {
+                if (err) reject(err);
+                resolve({
+                    message: "Resource deleted"
+                });
+            });
+        });
     }
 };
