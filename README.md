@@ -152,7 +152,7 @@ Finally run compose:
 foo@bar:~$ docker-compose up
 ```
 
-## :anchor: Docker & DockerHub
+## :anchor: Docker hub
 
 If you wish to push the docker image to your docker hub account simply build the image and push it e.g:
 
@@ -173,10 +173,10 @@ foo@bar:~$ docker run -d --name dragonball \
            username/dragonball:tag
 ```
 
-## :airplane: Deploy
-In order to deploy it to the cloud, for example to an EC2 Instance over AWS:
+## :package: Aws
+In order to deploy it to the cloud, for example to an ec2 instance over aws:
 
-First off you gotta make sure you downloaded the EC2 Instance's key pair to a safe place in your computer.
+First make sure you downloaded the ec2 instance's key pair to a safe place in your computer.
 
 Then you should give it proper permissions by running:
 
@@ -497,6 +497,9 @@ That should give us the express service's url and port. Now if you issue a curl 
 curl -X POST https://192.168.64.30:30136/api/auth -k -d '{ "user":"admin", "password":"admin" }' -H 'Content-Type: application/json'
 ```
 
+## :cloud: Google cloud
+
+Coming soon ...
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
