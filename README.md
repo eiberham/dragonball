@@ -448,6 +448,12 @@ noglob helm install mongo oci://registry-1.docker.io/bitnamicharts/mongodb \
 --values values.yml --debug
 ```
 
+If you want to check the underlying manifest for this helm release you can issue the following command:
+
+```bash
+helm get manifest mongo
+```
+
 You can either check the pod logs to make sure there was no error or log into the pod and query any seeded collection. Plus the seeding script should be located at inside the pod.
 
 ```bash
@@ -465,6 +471,18 @@ Finally we need a redis instance, so we will install a helm chart with authentic
 noglob helm install redis oci://registry-1.docker.io/bitnamicharts/redis \
 --set auth.enabled=false \
 --set replica.replicaCount=1
+```
+
+If you want to check the underlying manifest for this helm release you can issue the following command:
+
+```bash
+helm get manifest redis
+```
+
+Now check if pods are running
+
+```bash
+kubectl get pods
 ```
 
 By having every piece of the puzzle in place proceed to issue the following command to get the express url:
