@@ -499,7 +499,34 @@ curl -X POST https://192.168.64.30:30136/api/auth -k -d '{ "user":"admin", "pass
 
 ## :cloud: Google cloud
 
-Coming soon ...
+First log in 
+
+```bash
+gcloud auth login
+```
+
+Now set the project where you want to create the kubernetes cluster
+
+```bash
+gcloud config set project DRAGONBALL_PROJECT_ID
+```
+
+Then create a cluster by running this command:
+
+```bash
+gcloud container clusters create dragonball \
+--num-nodes 2 \
+--machine-type n1-standard-2 \
+--zone us-central1-a
+```
+
+Get the credentials
+
+```bash
+gcloud container clusters get-credentials dragonball --zone us-central1-a
+```
+
+Update coming soon ...
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
